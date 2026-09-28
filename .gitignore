@@ -1,0 +1,8 @@
+node_modules/
+app/node_modules/
+app/dist/
+app/evidence/dev/
+app/evidence/**/*.webm
+*.log
+.DS_Store
+app/assets-source/blender/*.blend1

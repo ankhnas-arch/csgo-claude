@@ -1,0 +1,25 @@
+{
+  "name": "cs2-browser-recreation",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "evidence": "node tools/evidence/run.mjs"
+  },
+  "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.14.0",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.170.0",
+    "playwright": "1.49",
+    "typescript": "5.6",
+    "vite": "^6.4.3",
+    "vitest": "^2.1.9"
+  }
+}
