@@ -55,3 +55,14 @@ CS12/CS14 show dark tactical gloves with knuckle padding and sleeve cuffs; used 
 Natural-timing clips are scaled at runtime to the rule durations (`demo.reloadTime`, `demo.drawTime`, `demo.inspectTime`,
 AWP `rechamberTime`). Ammo is granted by the rules at `ammoInsertAt × reloadTime` (0.55–0.62 of the reload), independent of
 the animation, so an interrupted clip can never duplicate ammunition.
+
+## Authored animation clips (from Blender, `public/assets/weapons/*.anim.json`, 30 fps; class A)
+| Weapon | GLB | Clips (frames, natural duration) | Event markers (frame) |
+|---|---|---|---|
+| ak47 | 2.06 MB | idle 0–60 (2.00 s), equip 60–90 (1.00 s), fire 90–102 (0.40 s), reload 102–180 (2.60 s), inspect 180–280 (3.33 s) | reload_mag_out@120, reload_mag_in@150, reload_end@180 |
+| awp | 2.18 MB | idle 0–60 (2.00 s), equip 60–90 (1.00 s), fire 90–104 (0.47 s), rechamber 104–140 (1.20 s), reload 140–230 (3.00 s), inspect 230–330 (3.33 s) | rechamber_open@121, rechamber_close@133, reload_mag_out@160, reload_mag_in@195, reload_end@230 |
+| knife | 0.20 MB | idle 0–60 (2.00 s), equip 60–80 (0.67 s), fire 80–96 (0.53 s), fire2 96–116 (0.67 s), inspect 116–200 (2.80 s) | — |
+| m4a4 | 2.43 MB | idle 0–60 (2.00 s), equip 60–90 (1.00 s), fire 90–101 (0.37 s), reload 101–190 (2.97 s), inspect 190–290 (3.33 s) | reload_mag_out@122, reload_mag_in@156, reload_end@190 |
+| usp | 1.24 MB | idle 0–60 (2.00 s), equip 60–84 (0.80 s), fire 84–96 (0.40 s), reload 96–170 (2.47 s), inspect 170–260 (3.00 s) | reload_mag_out@112, reload_mag_in@146, reload_end@170 |
+
+At runtime `ViewModel.play` rescales each clip to the rule duration (`demo.reloadTime` etc.); the rules grant ammunition at `ammoInsertAt × reloadTime` regardless of the clip, so interrupted clips can never duplicate ammo (see `tests/rules.test.ts`).

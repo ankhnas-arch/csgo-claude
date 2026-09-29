@@ -1,0 +1,47 @@
+{
+  "name": "firing",
+  "status": "FAIL",
+  "steps": [
+    {
+      "name": "full-auto burst fires ~10+ rounds in 1.2 s",
+      "ok": true,
+      "detail": "12 shots"
+    },
+    {
+      "name": "spray group widens / climbs (max deviation > 0.15 m at 4.6 m)",
+      "ok": false,
+      "detail": "max dev 0.07 m"
+    },
+    {
+      "name": "moving spread present",
+      "ok": true,
+      "detail": "moving max dev 3.71 m"
+    },
+    {
+      "name": "head hit registers with higher damage than body hit",
+      "ok": false,
+      "detail": "head 142 (head) body undefined (undefined)"
+    },
+    {
+      "name": "shot at body behind solid cover does not damage",
+      "ok": true,
+      "detail": "hurt events 0, trace hit null"
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "notes": [
+    "aim check head: {\"actor\":\"SEAL Team\",\"group\":\"chest\",\"distance\":9.85,\"point\":[38,1.72,0.15]}",
+    "aim check body: {\"actor\":null,\"group\":null,\"distance\":29.96,\"point\":[38,0,-19.91]}",
+    "aim check cover: {\"actor\":null,\"group\":null,\"distance\":5.82,\"point\":[0,1.6,3.18]}"
+  ],
+  "shots": [
+    "evidence/run-batch1d/firing/spray_impacts.png",
+    "evidence/run-batch1d/firing/bot_hit.png",
+    "evidence/run-batch1d/firing/cover.png"
+  ],
+  "errors": []
+}

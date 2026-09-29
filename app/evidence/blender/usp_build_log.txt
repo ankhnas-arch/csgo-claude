@@ -1,0 +1,21 @@
+[0s] geometry built: frame=988, barrel=152, suppressor=1008, bolt=580, mag=252, trigger=92
+  baked bolt: metal 1024x1024 basecolor+roughness in 17.1s
+  baked frame: polymer 1024x1024 basecolor+roughness in 17.9s
+[35s] bakes done in 35.1s
+world copy: 900 tris
+arms tris: 4688
+[35s] tri counts: gun(viewmodel)=3072, arms=4688, world=900, total=8660
+  per object: cuff_L=124, sleeve_L=220, fL_1_s2=136, fL_1_s1=116, fL_2_s2=136, fL_2_s1=116, fL_3_s2=136, fL_3_s1=116, fL_4_s2=136, fL_4_s1=116, knuckles_L=256, palm_L=384, thenar_L=100, thumb_L_s2=136, thumb_L_s1=116, cuff_R=124, sleeve_R=220, fR_1_s2=136, fR_1_s1=116, fR_2_s2=136, fR_2_s1=116, fR_3_s2=136, fR_3_s1=116, fR_4_s2=136, fR_4_s1=116, knuckles_R=256, palm_R=384, thenar_R=100, thumb_R_s2=136, thumb_R_s1=116, bolt=580, frame=988, barrel=152, suppressor=1008, mag=252, trigger=92, world=900
+  materials: ['glove', 'glove_pad', 'metal_dark', 'metal_dark_bolt', 'polymer_black', 'polymer_black_frame', 'rubber', 'sleeve', 'steel_bright']; images: [('usp_bolt_basecolor.jpg', 1024), ('usp_bolt_roughness.jpg', 1024), ('usp_frame_basecolor.jpg', 1024), ('usp_frame_roughness.jpg', 1024)]
+  exported /home/user/csgo-claude/app/public/assets/weapons/usp.glb (1.30 MB)
+  wrote /home/user/csgo-claude/app/public/assets/weapons/usp.anim.json
+  saved /home/user/csgo-claude/app/assets-source/blender/usp.blend (0.62 MB)
+  render times: side 27.1s, front 27.6s, threequarter 44.5s, fp 21.7s, anim strips (workbench) 23.5s
+VERIFY GLB /home/user/csgo-claude/app/public/assets/weapons/usp.glb
+  animation 'Scene': 19 channels, time 0.000..8.667s = frames 0..260
+  nodes (66): cuff_L, sleeve_L, arm_L, fL_1_s2, fL_1_k2, fL_1_s1, fL_1, fL_2_s2, fL_2_k2, fL_2_s1, fL_2, fL_3_s2, fL_3_k2, fL_3_s1, fL_3, fL_4_s2, fL_4_k2, fL_4_s1, fL_4, knuckles_L, palm_L, thenar_L, thumb_L_s2, thumb_L_k2, thumb_L_s1, thumb_L, hand_L, cuff_R, sleeve_R, arm_R, fR_1_s2, fR_1_k2, fR_1_s1, fR_1, fR_2_s2, fR_2_k2, fR_2_s1, fR_2, fR_3_s2, fR_3_k2, fR_3_s1, fR_3, fR_4_s2, fR_4_k2, fR_4_s1, fR_4, knuckles_R, palm_R, thenar_R, thumb_R_s2, thumb_R_k2, thumb_R_s1, thumb_R, hand_R, arms, slide, bolt, barrel, eject, muzzle, suppressor, frame, mag, trigger, world, weapon
+  materials: glove, sleeve, glove_pad, metal_dark_bolt, steel_bright, metal_dark, rubber, polymer_black_frame
+  triangles total 8660: cuff_L=124, sleeve_L=220, fL_1_s2=136, fL_1_s1=116, fL_2_s2=136, fL_2_s1=116, fL_3_s2=136, fL_3_s1=116, fL_4_s2=136, fL_4_s1=116, knuckles_L=256, palm_L=384, thenar_L=100, thumb_L_s2=136, thumb_L_s1=116, cuff_R=124, sleeve_R=220, fR_1_s2=136, fR_1_s1=116, fR_2_s2=136, fR_2_s1=116, fR_3_s2=136, fR_3_s1=116, fR_4_s2=136, fR_4_s1=116, knuckles_R=256, palm_R=384, thenar_R=100, thumb_R_s2=136, thumb_R_s1=116, bolt=580, barrel=152, suppressor=1008, frame=988, mag=252, trigger=92, world=900
+  images: 4, size 1.30 MB
+  bpy re-import: 1 actions, names ['Scene'], frame range 0..260; objects 66
+[181s] done

@@ -117,8 +117,9 @@ def rounded_rect2d(w, h, r=0.0, seg=3, cx=0.0, cy=0.0):
             pts.append((cx + cxo + r * math.cos(a), cy + cyo + r * math.sin(a)))
     return pts
 
-def ellipse2d(w, h, n=16, cx=0.0, cy=0.0, k=1.0):
-    """Ellipse / superellipse (k>1 -> squarer)."""
+def ellipse2d(w, h, n=16, cx=0.0, cy=0.0, k=2.0):
+    """Ellipse / superellipse with exponent k: k=2 true ellipse, k>2 squarer, k<2 pointier (diamond at k=1).
+    (Pass 3 fix: the default used to be k=1, which made every cyl() / lens / finger section a diamond.)"""
     out = []
     for i in range(n):
         a = 2 * math.pi * i / n; c, s = math.cos(a), math.sin(a)
@@ -367,15 +368,15 @@ def _finger_segment(name, length, r0, r1, parent, mat, tip=False, segs=10):
     # rounded root (so the joint looks continuous when bent)
     for a in (-0.6, -0.3):
         f = math.sqrt(max(0.0, 1 - (a / 0.6) ** 2)) if a < 0 else 1
-        rings.append(ring_y(ellipse2d(2 * r0 * max(f, 0.35), 2 * r0 * 0.9 * max(f, 0.35), segs, k=1.3), a * r0 * 0.6 + 0.0 if False else a * r0))
-    rings.append(ring_y(ellipse2d(2 * r0, 2 * r0 * 0.9, segs, k=1.3), 0.0))
-    rings.append(ring_y(ellipse2d(2 * (r0 * 0.5 + r1 * 0.5), 2 * (r0 * 0.5 + r1 * 0.5) * 0.9, segs, k=1.3), length * 0.5))
+        rings.append(ring_y(ellipse2d(2 * r0 * max(f, 0.35), 2 * r0 * 0.9 * max(f, 0.35), segs, k=2.0), a * r0 * 0.6 + 0.0 if False else a * r0))
+    rings.append(ring_y(ellipse2d(2 * r0, 2 * r0 * 0.9, segs, k=2.0), 0.0))
+    rings.append(ring_y(ellipse2d(2 * (r0 * 0.5 + r1 * 0.5), 2 * (r0 * 0.5 + r1 * 0.5) * 0.9, segs, k=2.0), length * 0.5))
     if tip:
-        rings.append(ring_y(ellipse2d(2 * r1, 2 * r1 * 0.9, segs, k=1.3), length - r1 * 0.9))
+        rings.append(ring_y(ellipse2d(2 * r1, 2 * r1 * 0.9, segs, k=2.0), length - r1 * 0.9))
         rings.append(ring_y(ellipse2d(2 * r1 * 0.75, 2 * r1 * 0.72, segs), length - r1 * 0.35, dz=-r1 * 0.05))
         rings.append(ring_y(ellipse2d(2 * r1 * 0.3, 2 * r1 * 0.3, segs), length, dz=-r1 * 0.12))
     else:
-        rings.append(ring_y(ellipse2d(2 * r1, 2 * r1 * 0.9, segs, k=1.3), length - r1 * 0.3))
+        rings.append(ring_y(ellipse2d(2 * r1, 2 * r1 * 0.9, segs, k=2.0), length - r1 * 0.3))
         rings.append(ring_y(ellipse2d(2 * r1 * 0.8, 2 * r1 * 0.75, segs), length + r1 * 0.25))
     ob = loft(name, rings, True, True, mat, parent); shade_smooth(ob, 50); return ob
 
@@ -387,7 +388,7 @@ def _hand(side, parent):
     hand = empty(f'hand_{side}', (0, 0, 0), parent); hand.rotation_mode = 'QUATERNION'
     objs = {'hand': hand}
     # palm: loft along +Y with superellipse sections (soft box), domed back, tapered at the wrist, widest at the knuckles
-    sh = lambda w, h: ellipse2d(w, h, 20, k=1.7)
+    sh = lambda w, h: ellipse2d(w, h, 20, k=2.2)
     palm_rings = [
         ring_y(sh(0.056, 0.026), 0.000),
         ring_y(sh(0.070, 0.030), 0.020, dz=0.0015),
@@ -426,13 +427,13 @@ def _hand(side, parent):
     th = mesh_from_bm(f'thenar_{side}', bm, glove, hand); shade_smooth(th, 60); objs['thenar'] = th
     # forearm: glove cuff then sleeve, along -Y from the wrist. Child of the hand so posing the hand carries it.
     arm = empty(f'arm_{side}', (0, 0, 0), hand, 0.02); arm.rotation_mode = 'QUATERNION'; objs['arm'] = arm
-    cuff_rings = [ring_y(ellipse2d(0.064, 0.042, 16, k=1.6), 0.004), ring_y(ellipse2d(0.066, 0.046, 16, k=1.6), -0.030),
-                  ring_y(ellipse2d(0.070, 0.050, 16, k=1.6), -0.060), ring_y(ellipse2d(0.074, 0.056, 16, k=1.6), -0.075)]
+    cuff_rings = [ring_y(ellipse2d(0.064, 0.042, 16, k=2.0), 0.004), ring_y(ellipse2d(0.066, 0.046, 16, k=2.0), -0.030),
+                  ring_y(ellipse2d(0.070, 0.050, 16, k=2.0), -0.060), ring_y(ellipse2d(0.074, 0.056, 16, k=2.0), -0.075)]
     cuff = loft(f'cuff_{side}', cuff_rings, True, True, glove, arm); shade_smooth(cuff, 40); objs['cuff'] = cuff
-    sleeve_rings = [ring_y(ellipse2d(0.082, 0.064, 16, k=1.5), -0.062), ring_y(ellipse2d(0.094, 0.076, 16, k=1.5), -0.070),   # rolled cuff
-                    ring_y(ellipse2d(0.096, 0.080, 16, k=1.5), -0.085), ring_y(ellipse2d(0.092, 0.078, 16, k=1.5), -0.100),
-                    ring_y(ellipse2d(0.100, 0.088, 16, k=1.5), -0.190), ring_y(ellipse2d(0.112, 0.100, 16, k=1.5), -0.290),
-                    ring_y(ellipse2d(0.118, 0.106, 16, k=1.5), -0.360)]
+    sleeve_rings = [ring_y(ellipse2d(0.082, 0.064, 16, k=2.1), -0.062), ring_y(ellipse2d(0.094, 0.076, 16, k=2.1), -0.070),   # rolled cuff
+                    ring_y(ellipse2d(0.096, 0.080, 16, k=2.1), -0.085), ring_y(ellipse2d(0.092, 0.078, 16, k=2.1), -0.100),
+                    ring_y(ellipse2d(0.100, 0.088, 16, k=2.1), -0.190), ring_y(ellipse2d(0.112, 0.100, 16, k=2.1), -0.290),
+                    ring_y(ellipse2d(0.118, 0.106, 16, k=2.1), -0.360)]
     sleeve = loft(f'sleeve_{side}', sleeve_rings, True, True, get_mat('sleeve'), arm); shade_smooth(sleeve, 40); objs['sleeve'] = sleeve
     return objs
 

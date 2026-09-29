@@ -65,6 +65,10 @@ export class Ctx {
   perf() { return this.page.evaluate(() => window.__cs2.perf()); }
   /** Wait until the active weapon finished its draw/reload/etc. (sim-time dependent; software GL runs slower than real time). */
   async awaitIdle(timeout = 15000) { await this.page.waitForFunction(() => { const p = window.__cs2.state().player; return p && (!p.alive || p.action === 'idle' || p.action === 'inspect'); }, null, { timeout }).catch(() => {}); }
+  /** Right-click until the AWP zoom level matches (max 4 tries). */
+  async ensureZoom(level) { for (let i = 0; i < 4; i++) { const p = (await this.state()).player; if (p.zoom === level) return true; await this.awaitIdle(); await this.click(60, 'right'); await this.wait(250); } return (await this.state()).player.zoom === level; }
+  /** Aim at a world point and verify with the game's own trace that the aim ray hits an actor; re-aim up to 3 times. */
+  async aimAtActor(x, y, z) { let hit = null; for (let i = 0; i < 3; i++) { await this.aimAtPoint(x, y, z); await this.wait(150); hit = await this.ev(() => window.__cs2.aimHit()); if (hit && hit.actor) return hit; } return hit; }
   async give(id) { await this.ev(k => window.__cs2.giveWeapon(k), id); await this.awaitIdle(); }
 }
 export function summarize(results) { return results.map(r => `| ${r.name} | ${r.status} | ${r.steps.filter(s => s.ok).length}/${r.steps.length} steps | ${r.notes.join('; ')} |`).join('\n'); }

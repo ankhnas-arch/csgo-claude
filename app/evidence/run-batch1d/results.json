@@ -119,5 +119,223 @@
     ],
     "errors": [],
     "seconds": 90
+  },
+  {
+    "name": "firing",
+    "status": "FAIL",
+    "steps": [
+      {
+        "name": "full-auto burst fires ~10+ rounds in 1.2 s",
+        "ok": true,
+        "detail": "12 shots"
+      },
+      {
+        "name": "spray group widens / climbs (max deviation > 0.15 m at 4.6 m)",
+        "ok": false,
+        "detail": "max dev 0.07 m"
+      },
+      {
+        "name": "moving spread present",
+        "ok": true,
+        "detail": "moving max dev 3.71 m"
+      },
+      {
+        "name": "head hit registers with higher damage than body hit",
+        "ok": false,
+        "detail": "head 142 (head) body undefined (undefined)"
+      },
+      {
+        "name": "shot at body behind solid cover does not damage",
+        "ok": true,
+        "detail": "hurt events 0, trace hit null"
+      },
+      {
+        "name": "no console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "notes": [
+      "aim check head: {\"actor\":\"SEAL Team\",\"group\":\"chest\",\"distance\":9.85,\"point\":[38,1.72,0.15]}",
+      "aim check body: {\"actor\":null,\"group\":null,\"distance\":29.96,\"point\":[38,0,-19.91]}",
+      "aim check cover: {\"actor\":null,\"group\":null,\"distance\":5.82,\"point\":[0,1.6,3.18]}"
+    ],
+    "shots": [
+      "evidence/run-batch1d/firing/spray_impacts.png",
+      "evidence/run-batch1d/firing/bot_hit.png",
+      "evidence/run-batch1d/firing/cover.png"
+    ],
+    "errors": [],
+    "seconds": 140
+  },
+  {
+    "name": "reload_switch",
+    "status": "FAIL",
+    "steps": [
+      {
+        "name": "magazine empties to 0 by firing",
+        "ok": true,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"ak47\",\"action\":\"idle\",\"mag\":0,\"reserve\":90,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "dry fire does nothing / no negative ammo",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "R starts reload",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "switch interrupts reload (knife active)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "interrupted reload granted no ammo",
+        "ok": true,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"ak47\",\"action\":\"idle\",\"mag\":0,\"reserve\":90,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "complete reload: 30/60 (reserve conserved)",
+        "ok": true,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"ak47\",\"action\":\"reload\",\"mag\":30,\"reserve\":60,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "reload emits start/insert/end once each",
+        "ok": false,
+        "detail": "start,start,insert"
+      },
+      {
+        "name": "partial reload tops up and reserve drops by exactly the shortfall",
+        "ok": true,
+        "detail": "fired 0, reserve 60"
+      },
+      {
+        "name": "drop after insert: weapon gone from inventory",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "pick up dropped weapon with E (ammo total conserved)",
+        "ok": true,
+        "detail": "30/55 vs 85"
+      },
+      {
+        "name": "death during reload: player dead, ammo non-negative",
+        "ok": true,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":false,\"health\":0,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"glock\",\"action\":\"draw\",\"mag\":20,\"reserve\":60,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":false,\"kit\":false,\"grenades\":[],\"primary\":null,\"secondary\":\"glock\",\"kills\":0,\"deaths\":1,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "no console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "notes": [],
+    "shots": [
+      "evidence/run-batch1d/reload_switch/reload_mid.png",
+      "evidence/run-batch1d/reload_switch/dead.png"
+    ],
+    "errors": [],
+    "seconds": 108
+  },
+  {
+    "name": "scope_melee",
+    "status": "FAIL",
+    "steps": [
+      {
+        "name": "first RMB: zoom level 1, FOV 40, overlay on, viewmodel hidden",
+        "ok": true,
+        "detail": "{\"current\":40,\"target\":40,\"cameraVFov\":30.5369432627651,\"viewmodelVisible\":false,\"scopeOverlay\":true}"
+      },
+      {
+        "name": "second RMB: zoom level 2, FOV 10",
+        "ok": true,
+        "detail": "{\"current\":10,\"target\":10,\"cameraVFov\":7.50833333548052,\"viewmodelVisible\":false,\"scopeOverlay\":true}"
+      },
+      {
+        "name": "third RMB: back to unscoped, FOV restored",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "scoped sensitivity scales down (zoom 1 ≈ 40/90)",
+        "ok": true,
+        "detail": "unscoped 0.230 scoped 0.102"
+      },
+      {
+        "name": "AWP shot hits scoped target and unscopes immediately",
+        "ok": false,
+        "detail": "damage undefined zoom after shot 0"
+      },
+      {
+        "name": "rechamber then automatic re-scope to previous level",
+        "ok": true,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"CT\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":30,\"yaw\":0,\"pitch\":-0.015,\"active\":\"awp\",\"action\":\"idle\",\"mag\":4,\"reserve\":10,\"zoom\":1,\"needsRechamber\":false,\"hasBomb\":false,\"kit\":false,\"grenades\":[],\"primary\":\"awp\",\"secondary\":\"usp\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "rapid switch/fire respects AWP cycle (≤1 extra shot)",
+        "ok": true,
+        "detail": "0 awp shots in 1 s"
+      },
+      {
+        "name": "switch while scoped restores FOV and clears overlay",
+        "ok": true,
+        "detail": "{\"current\":90,\"target\":90,\"cameraVFov\":73.73979529168803,\"viewmodelVisible\":true,\"scopeOverlay\":false}"
+      },
+      {
+        "name": "drop while scoped restores FOV",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "pause/resume while scoped keeps state coherent and fires nothing",
+        "ok": false,
+        "detail": "{\"zoom\":0,\"mag\":4}"
+      },
+      {
+        "name": "base FOV changed while scoped is restored correctly",
+        "ok": false,
+        "detail": "{\"current\":40,\"target\":40,\"cameraVFov\":30.5369432627651,\"viewmodelVisible\":false,\"scopeOverlay\":true}"
+      },
+      {
+        "name": "death while scoped clears overlay",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "knife swing at 6 m misses",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "knife slash at 1 m hits for ~40",
+        "ok": true,
+        "detail": "{\"actorId\":6,\"attackerId\":1,\"damage\":40,\"hitGroup\":\"chest\",\"weapon\":\"knife\"}"
+      },
+      {
+        "name": "knife stab (RMB) hits harder",
+        "ok": true,
+        "detail": "{\"actorId\":6,\"attackerId\":1,\"damage\":65,\"hitGroup\":\"chest\",\"weapon\":\"knife\"}"
+      },
+      {
+        "name": "no console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "notes": [],
+    "shots": [
+      "evidence/run-batch1d/scope_melee/awp_unscoped.png",
+      "evidence/run-batch1d/scope_melee/awp_zoom1.png",
+      "evidence/run-batch1d/scope_melee/awp_zoom2.png",
+      "evidence/run-batch1d/scope_melee/awp_rescoped.png",
+      "evidence/run-batch1d/scope_melee/awp_dead.png",
+      "evidence/run-batch1d/scope_melee/knife.png"
+    ],
+    "errors": [],
+    "seconds": 226
   }
 ]

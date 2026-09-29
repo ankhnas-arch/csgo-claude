@@ -139,9 +139,11 @@ export class Game {
       if (ev === 'fireEnd' && w.def.zoomLevels > 0 && w.needsRechamber) { w.startAction('rechamber', Math.max(0.2, w.def.cycleTime - w.actionDur)); }
       if (ev === 'rechamberEnd') { if (a.rezoomLevel > 0 && w.mag > 0) { w.zoomLevel = a.rezoomLevel; this.events.emit('scope', { actorId: a.id, level: w.zoomLevel }); } a.rezoomLevel = 0; }
     }
-    // recoil decay
+    // recoil: accumulates while spraying (slow decay), recovers quickly once firing stops (recoveryTimeStand)
     const rec = Math.max(0.05, w.def.recoveryTimeStand);
-    a.aimPunchPitch -= a.aimPunchPitch * Math.min(1, dt * 4.5 / rec); a.aimPunchYaw -= a.aimPunchYaw * Math.min(1, dt * 4.5 / rec);
+    const spraying = this.time - a.lastFireTime < Math.max(0.25, w.def.cycleTime * 2.5);
+    const rate = spraying ? 0.35 : 4.5;
+    a.aimPunchPitch -= a.aimPunchPitch * Math.min(1, dt * rate / rec); a.aimPunchYaw -= a.aimPunchYaw * Math.min(1, dt * rate / rec);
     if (Math.abs(a.aimPunchPitch) < 0.01) a.aimPunchPitch = 0;
     // flash decay
     if (a.flashDuration > 0) { const t = this.time - a.flashTime; if (t >= a.flashDuration) { a.flashDuration = 0; a.flashAlpha = 0; } else { a.flashAlpha = Math.min(1, (1 - t / a.flashDuration) * 1.6); } }

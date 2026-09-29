@@ -1,0 +1,72 @@
+{
+  "name": "reload_switch",
+  "status": "FAIL",
+  "steps": [
+    {
+      "name": "magazine empties to 0 by firing",
+      "ok": true,
+      "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"ak47\",\"action\":\"idle\",\"mag\":0,\"reserve\":90,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+    },
+    {
+      "name": "dry fire does nothing / no negative ammo",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "R starts reload",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "switch interrupts reload (knife active)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "interrupted reload granted no ammo",
+      "ok": true,
+      "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"ak47\",\"action\":\"idle\",\"mag\":0,\"reserve\":90,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+    },
+    {
+      "name": "complete reload: 30/60 (reserve conserved)",
+      "ok": true,
+      "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"ak47\",\"action\":\"reload\",\"mag\":30,\"reserve\":60,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+    },
+    {
+      "name": "reload emits start/insert/end once each",
+      "ok": false,
+      "detail": "start,start,insert"
+    },
+    {
+      "name": "partial reload tops up and reserve drops by exactly the shortfall",
+      "ok": true,
+      "detail": "fired 0, reserve 60"
+    },
+    {
+      "name": "drop after insert: weapon gone from inventory",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pick up dropped weapon with E (ammo total conserved)",
+      "ok": true,
+      "detail": "30/55 vs 85"
+    },
+    {
+      "name": "death during reload: player dead, ammo non-negative",
+      "ok": true,
+      "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":false,\"health\":0,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"glock\",\"action\":\"draw\",\"mag\":20,\"reserve\":60,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":false,\"kit\":false,\"grenades\":[],\"primary\":null,\"secondary\":\"glock\",\"kills\":0,\"deaths\":1,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "notes": [],
+  "shots": [
+    "evidence/run-batch1d/reload_switch/reload_mid.png",
+    "evidence/run-batch1d/reload_switch/dead.png"
+  ],
+  "errors": []
+}

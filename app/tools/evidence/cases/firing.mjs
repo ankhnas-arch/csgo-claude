@@ -20,10 +20,11 @@ export default async function (c) {
   const enemy = (await c.ev(() => window.__cs2.actors())).find(a => a.team === 'CT');
   await c.ev(id => window.__cs2.teleport(38, 0, 0, id), enemy.id); await c.ev(() => window.__cs2.teleport(38, 10, 0)); await c.wait(300); c.mx = 640; c.my = 360;
   await c.press('KeyR'); await c.wait(3000);
-  await c.aimAtPoint(38, 1.72, 0); await c.wait(200); await c.events(); let hit = await c.ev(() => window.__cs2.aimHit()); c.note(`aim check head: ${JSON.stringify(hit)}`);
+  // body first (36 dmg leaves the bot alive), then head
+  let hit = await c.aimAtActor(38, 1.15, 0); c.note(`aim check body: ${JSON.stringify(hit)}`); await c.events();
+  await c.click(60); await c.wait(300); const h2 = (await c.events('hurt')).filter(e => e.p.actorId === enemy.id);
+  hit = await c.aimAtActor(38, 1.72, 0); c.note(`aim check head: ${JSON.stringify(hit)}`); await c.events();
   await c.click(60); await c.wait(300); const h1 = (await c.events('hurt')).filter(e => e.p.actorId === enemy.id);
-  await c.aimAtPoint(38, 1.1, 0); await c.wait(200); hit = await c.ev(() => window.__cs2.aimHit()); c.note(`aim check body: ${JSON.stringify(hit)}`);
-  await c.wait(400); await c.click(60); await c.wait(300); const h2 = (await c.events('hurt')).filter(e => e.p.actorId === enemy.id);
   c.step('head hit registers with higher damage than body hit', h1.length > 0 && h2.length > 0 && h1[0].p.damage > h2[0].p.damage, `head ${h1[0]?.p.damage} (${h1[0]?.p.hitGroup}) body ${h2[0]?.p.damage} (${h2[0]?.p.hitGroup})`);
   await c.shot('bot_hit');
   await c.ev(id => window.__cs2.teleport(0, -1.2, 180, id), enemy.id); await c.ev(() => window.__cs2.teleport(0, 9, 0)); await c.wait(300); c.mx = 640; c.my = 360;

@@ -43,7 +43,7 @@ def loop(name, center, r, thick, mat=None, segs=12):
 
 # ------------------------------------------------------------------------------------------------- receiver (steel action)
 parts = []
-sec = lambda w, h: ellipse2d(w, h, 24, k=1.8)
+sec = lambda w, h: ellipse2d(w, h, 24, k=2.2)
 parts.append(loft('action', [ring_y(sec(0.036, 0.038), -0.030, dz=B), ring_y(sec(0.038, 0.040), -0.020, dz=B), ring_y(sec(0.038, 0.040), 0.215, dz=B), ring_y(sec(0.034, 0.036), 0.222, dz=B)], True, True, MB))
 rail = box('rail', (0, 0.095, B + 0.025), (0.021, 0.232, 0.011), MB); add_bevel(rail, 0.0025, 2); parts.append(rail)
 for i in range(9):                                                        # rail slots (thin dark strips)
@@ -96,7 +96,7 @@ boolean_cut(stock, loft('cut_skel', [place(rounded_rect2d(0.105, 0.042, 0.014, 4
 gaxis = Vector((0, -0.40, -0.92)).normalized(); gv = Vector((0, 0.92, -0.40)).normalized(); gtop = Vector((0, -0.040, -0.010))
 def grip_ring(s, w, d, fwd=0.0):
     c = gtop + gaxis * (0.108 * s) + gv * fwd
-    return place(ellipse2d(w, d, 18, k=1.7), c, (1, 0, 0), gv)
+    return place(ellipse2d(w, d, 18, k=2.1), c, (1, 0, 0), gv)
 grip = loft('grip', [grip_ring(0.0, 0.034, 0.044), grip_ring(0.3, 0.035, 0.046, 0.001), grip_ring(0.6, 0.038, 0.050, 0.003), grip_ring(0.85, 0.040, 0.054, 0.005), grip_ring(1.0, 0.034, 0.046, 0.004)], True, True, PG)
 add_bevel(grip, 0.004, 2, 40)
 riser = box('cheek', (0, -0.205, 0.060), (0.040, 0.170, 0.034), PG); add_bevel(riser, 0.008, 3)

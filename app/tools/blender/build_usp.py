@@ -20,7 +20,7 @@ MD, SB, PB, RB = 'metal_dark', 'steel_bright', 'polymer_black', 'rubber'
 
 # ------------------------------------------------------------------------------------------------- frame (polymer) + grip + guard + rail
 gaxis = Vector((0, -0.30, -0.954)).normalized(); gv = Vector((0, 0.954, -0.30)).normalized(); gtop = Vector((0, -0.026, 0.000))
-def grip_ring(s, w, d, fwd=0.0, k=1.9):
+def grip_ring(s, w, d, fwd=0.0, k=2.3):
     c = gtop + gaxis * (0.108 * s) + gv * fwd
     return place(ellipse2d(w, d, 20, k=k), c, (1, 0, 0), gv)
 fp = [profile_extrude('frame_body', [(-0.052, -0.006), (0.118, -0.006), (0.118, 0.021), (-0.052, 0.021)], -0.0140, 0.0140, PB)]
@@ -98,10 +98,10 @@ def key_right_grip(f):
     set_local_matrix(R['hand'], R_GRIP_M); curl_fingers(R, R_GRIP_CURL, spread=1, lift={'f1': 35}); point_thumb(R, R_GRIP_M, (-0.30, 1.0, 0.10))
     key_hand(R, f, None, None, R_ELBOW)
 # left hand: two-handed cup grip, palm against the left side of the grip / right-hand fingers, fingers over the right fingers
-L_CUP_M = hand_matrix_at((0.0, 0.050, -0.014), (-0.028, -0.030, -0.060), (0.70, 0.40, -0.59), (0.90, -0.05, 0.43))
+L_CUP_M = hand_matrix_at((0.0, 0.050, -0.014), (-0.028, -0.052, -0.040), (0.70, 0.40, -0.59), (0.90, -0.05, 0.43))
 L_CUP_CURL = {'f1': (58, 50), 'f2': (62, 54), 'f3': (64, 56), 'f4': (66, 60), 'thumb': (10, 20)}
 def key_left_cup(f):
-    set_local_matrix(Lh['hand'], L_CUP_M); curl_fingers(Lh, L_CUP_CURL, spread=2); point_thumb(Lh, L_CUP_M, (-0.10, 1.0, -0.12))
+    set_local_matrix(Lh['hand'], L_CUP_M); curl_fingers(Lh, L_CUP_CURL, spread=2); point_thumb(Lh, L_CUP_M, (0.05, 1.0, 0.25))
     key_hand(Lh, f, None, None, L_ELBOW)
 log(f'arms tris: {sum(tri_report(A["arms"]).values())}')
 OPEN_CURL = {'f1': (15, 10), 'f2': (20, 15), 'f3': (20, 15), 'f4': (22, 18), 'thumb': (0, 10)}
@@ -159,7 +159,7 @@ if POSE_ONLY:
     def wv(frame, views):
         bpy.context.scene.frame_set(frame); M = weapon.matrix_world.copy()
         return [(n, M @ Vector(l), M @ Vector(t), lens) for n, l, t, lens in views]
-    render_closeups(WID, [('grip_right', (0.40, -0.30, -0.02), (0.0, -0.03, -0.04), 50), ('grip_left', (-0.40, 0.10, -0.16), (0.0, -0.03, -0.05), 50), ('grip_front', (0.02, 0.46, -0.12), (0.0, -0.02, -0.04), 50), ('side_ref', (-0.55, 0.09, 0.0), (0, 0.09, 0.0), 50)], 0)
+    render_closeups(WID, [('grip_right', (0.40, -0.30, -0.02), (0.0, -0.03, -0.04), 50), ('grip_left', (-0.42, -0.06, 0.06), (0.0, -0.03, -0.03), 55), ('grip_front', (0.02, 0.46, -0.12), (0.0, -0.02, -0.04), 50), ('side_ref', (-0.55, 0.09, 0.0), (0, 0.09, 0.0), 50)], 0)
     render_closeups(WID, wv(130, [('mag_hold', (-0.34, -0.10, -0.24), (-0.02, -0.04, -0.09), 50)]), 130)
     render_closeups(WID, wv(157, [('rack', (-0.30, -0.28, 0.20), (0.0, -0.02, 0.03), 50)]), 157)
     log(f'[{time.time() - T0:.0f}s] pose-only closeups done'); sys.exit(0)
