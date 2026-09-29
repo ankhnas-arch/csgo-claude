@@ -26,22 +26,27 @@ export class Ctx {
   async press(key, ms = 160) { await this.page.keyboard.down(key); await sleep(ms); await this.page.keyboard.up(key); }
   async hold(key, ms) { await this.page.keyboard.down(key); await sleep(ms); await this.page.keyboard.up(key); }
   async click(ms = 80, button = 'left') { await this.page.mouse.down({ button }); await sleep(ms); await this.page.mouse.up({ button }); }
-  /** Walk to a point with WASD + mouse steering. Returns {ok, time, stuck}. */
-  async walkTo(x, z, { timeout = 40000, tol = 1.2, run = true, jumpOnStuck = true } = {}) {
-    const t0 = Date.now(); let last = null; let lastMoveT = Date.now(); let stuckEvents = 0; let ok = false;
+  /** Walk to a point with WASD + mouse steering. Budgets are in SIM seconds (software GL runs slower than real time). */
+  async walkTo(x, z, { timeout = 40000, simBudget = 30, tol = 1.2, run = true, jumpOnStuck = true } = {}) {
+    const t0 = Date.now(); let last = null; let stuckEvents = 0; let ok = false;
+    const s0 = await this.state(); const simStart = s0.time; let lastMoveSim = simStart;
     await this.page.keyboard.down('KeyW');
-    while (Date.now() - t0 < timeout) {
+    while (Date.now() - t0 < timeout * 4) {
       const s = await this.state(); const p = s.player; if (!p || !p.alive) break;
+      if (s.time - simStart > simBudget) break;
       const d = Math.hypot(x - p.x, z - p.z); if (d < tol) { ok = true; break; }
       const yaw = Math.atan2(-(x - p.x), -(z - p.z)) * 180 / Math.PI; let dy = yaw - p.yaw * 180 / Math.PI; dy = ((dy + 540) % 360) - 180;
       if (Math.abs(dy) > 4) { if (Math.abs(dy) > 60) await this.page.keyboard.up('KeyW'); await this.turn(dy, -p.pitch * 180 / Math.PI * 0.5); await sleep(260); if (Math.abs(dy) > 60) await this.page.keyboard.down('KeyW'); }
-      if (last && Math.hypot(p.x - last.x, p.z - last.z) > 0.15) lastMoveT = Date.now();
-      if (Date.now() - lastMoveT > 1200) { stuckEvents++; lastMoveT = Date.now(); if (jumpOnStuck) { await this.press('Space', 80); await this.hold('KeyA', 250); } }
+      if (last && Math.hypot(p.x - last.x, p.z - last.z) > 0.15) lastMoveSim = s.time;
+      if (s.time - lastMoveSim > 1.0) { stuckEvents++; lastMoveSim = s.time; if (jumpOnStuck) { await this.press('Space', 120); await this.hold('KeyA', 250); } }
       last = p; await sleep(120); void run;
     }
     await this.page.keyboard.up('KeyW');
-    return { ok, time: (Date.now() - t0) / 1000, stuck: stuckEvents };
+    const s1 = await this.state();
+    return { ok, time: (Date.now() - t0) / 1000, simTime: +(s1.time - simStart).toFixed(1), stuck: stuckEvents };
   }
+  /** Wait until the simulation clock advanced by `s` seconds. */
+  async simSleep(s, timeout = 120000) { const t = (await this.state()).time; await this.page.waitForFunction(tt => window.__cs2.state().time >= tt, t + s, { timeout }); }
   async waitPhase(phase, timeout = 120000) { await this.page.waitForFunction(ph => window.__cs2.state().phase === ph, phase, { timeout }); }
   async waitFor(fn, arg, timeout = 60000) { await this.page.waitForFunction(fn, arg, { timeout }); }
   async ensureLocked() { const s = await this.state(); if (!s.locked) { if (await this.page.locator('#resume:not(.hidden)').count()) await this.page.click('#resume .box'); else await this.page.mouse.click(this.mx, this.my); await sleep(400); this.mx = (this.opts.width ?? 1280) / 2; this.my = (this.opts.height ?? 720) / 2; } return (await this.state()).locked; }

@@ -41,12 +41,16 @@ def select_only(obj):
 MATERIAL_SPECS = {
     'metal_blued':  ((0.085, 0.095, 0.115), 1.0, 0.45, 0.0),
     'polymer':      ((0.13, 0.05, 0.025), 0.0, 0.70, 0.0),     # bakelite-ish grip
-    'wood':         ((0.42, 0.22, 0.09), 0.0, 0.50, 0.0),
+    'wood':         ((0.147, 0.054, 0.018), 0.0, 0.34, 0.0),   # #6b4223 laminate, light varnish (pass 3)
     'steel_bright': ((0.62, 0.62, 0.64), 1.0, 0.30, 0.0),
     'rubber':       ((0.02, 0.02, 0.02), 0.0, 0.90, 0.0),
-    'glove':        ((0.03, 0.03, 0.035), 0.0, 0.60, 0.0),
-    'sleeve':       ((0.16, 0.17, 0.13), 0.0, 0.90, 0.0),
+    'glove':        ((0.022, 0.022, 0.025), 0.0, 0.55, 0.0),   # near-black tactical glove
+    'glove_pad':    ((0.045, 0.045, 0.048), 0.0, 0.80, 0.0),   # knuckle padding (slightly lighter, matte)
+    'sleeve':       ((0.075, 0.085, 0.045), 0.0, 0.90, 0.0),   # olive-drab fabric cuff
     'glass':        ((0.02, 0.03, 0.05), 0.0, 0.10, 0.4),
+    'polymer_green': ((0.055, 0.095, 0.045), 0.0, 0.62, 0.0),  # AWP body
+    'polymer_black': ((0.030, 0.031, 0.033), 0.0, 0.66, 0.0),  # USP frame
+    'metal_dark':   ((0.045, 0.048, 0.055), 1.0, 0.40, 0.0),   # phosphate/oxide slide & scope
 }
 
 def get_mat(name):
@@ -154,6 +158,23 @@ def cyl(name, r, length, center, axis='Y', segs=24, r2=None, mat=None, parent=No
         elif axis == 'X': rings.append(place(shape, (center[0] + t * length, center[1], center[2]), (0, 1, 0), (0, 0, 1)))
         else: rings.append(place(shape, (center[0], center[1], center[2] + t * length), (1, 0, 0), (0, 1, 0)))
     return loft(name, rings, cap, cap, mat, parent)
+
+def fluted_cyl(name, r, depth, length, center, flutes=6, segs=48, mat=None, parent=None, y_flute0=None, y_flute1=None):
+    """Cylinder along +Y with `flutes` shallow grooves (radius modulated by cos) between y_flute0..y_flute1; plain elsewhere."""
+    y0 = center[1] - length / 2; y1 = center[1] + length / 2
+    f0 = y0 if y_flute0 is None else y_flute0; f1 = y1 if y_flute1 is None else y_flute1
+    def ring(y, fl):
+        pts = []
+        for i in range(segs):
+            a = 2 * math.pi * i / segs; g = max(0.0, math.cos(flutes * a)) ** 3 if fl else 0.0
+            rr = r - depth * g; pts.append(Vector((center[0] + rr * math.cos(a), y, center[2] + rr * math.sin(a))))
+        return pts
+    rings = [ring(y0, False)]
+    if f0 > y0 + 1e-6: rings.append(ring(f0 - 0.004, False))
+    rings.append(ring(f0, True)); rings.append(ring(f1, True))
+    if f1 < y1 - 1e-6: rings.append(ring(f1 + 0.004, False))
+    rings.append(ring(y1, False))
+    return loft(name, rings, True, True, mat, parent)
 
 def sweep(name, path, width, thick, mat=None, parent=None, seg_corner=1):
     """Sweep a rectangular section (width along X, `thick` in the path plane) along a YZ path (list of (y,z)) - open path."""
@@ -269,9 +290,9 @@ def _surface_nodes(nt, kind, base_rgb, base_rough):
         grain = N.new('ShaderNodeTexNoise'); grain.inputs['Scale'].default_value = 120; grain.inputs['Detail'].default_value = 5; grain.inputs['Roughness'].default_value = 0.6
         L.new(mp.outputs['Vector'], grain.inputs['Vector'])
         gramp = N.new('ShaderNodeValToRGB'); cr = gramp.color_ramp
-        cr.elements[0].position = 0.30; cr.elements[0].color = (0.11, 0.040, 0.014, 1)
-        cr.elements[1].position = 0.72; cr.elements[1].color = (0.40, 0.185, 0.060, 1)
-        e2 = cr.elements.new(0.50); e2.color = (0.25, 0.105, 0.035, 1)
+        cr.elements[0].position = 0.30; cr.elements[0].color = (0.060, 0.024, 0.010, 1)   # dark laminate line
+        cr.elements[1].position = 0.72; cr.elements[1].color = (0.205, 0.088, 0.036, 1)   # light grain
+        e2 = cr.elements.new(0.50); e2.color = (0.135, 0.052, 0.019, 1)                   # #6b4223 body tone
         L.new(grain.outputs['Fac'], gramp.inputs['Fac'])
         # large-scale tone variation
         tone = N.new('ShaderNodeMixRGB'); tone.blend_type = 'MULTIPLY'; tone.inputs['Fac'].default_value = 0.5
@@ -279,20 +300,24 @@ def _surface_nodes(nt, kind, base_rgb, base_rough):
         vr = N.new('ShaderNodeValToRGB'); vr.color_ramp.elements[0].color = (0.72, 0.62, 0.55, 1); vr.color_ramp.elements[1].color = (1.10, 1.04, 0.98, 1)
         L.new(var.outputs['Fac'], vr.inputs['Fac']); L.new(vr.outputs['Color'], tone.inputs['Color2'])
         base_col = tone.outputs['Color']
-        wear_col = (0.50, 0.34, 0.18, 1)       # worn paler wood at edges
-        rough_base, rough_span = 0.42, 0.22
+        wear_col = (0.30, 0.19, 0.10, 1)       # worn paler wood at edges
+        rough_base, rough_span = 0.28, 0.16    # varnished: slight gloss
     else:
         vr = N.new('ShaderNodeValToRGB'); vr.color_ramp.elements[0].color = tuple(c * 0.75 for c in base_rgb) + (1,); vr.color_ramp.elements[1].color = tuple(c * 1.35 for c in base_rgb) + (1,)
         L.new(var.outputs['Fac'], vr.inputs['Fac'])
         base_col = vr.outputs['Color']
-        wear_col = (0.42, 0.42, 0.44, 1)       # bare steel showing through the bluing
+        if kind == 'polymer':                  # scuffed polymer: lighter, greyer version of the base colour
+            g = 0.299 * base_rgb[0] + 0.587 * base_rgb[1] + 0.114 * base_rgb[2]
+            wear_col = tuple(min(1.0, 0.5 * c * 2.4 + 0.5 * g * 3.0) for c in base_rgb) + (1,)
+        else:
+            wear_col = (0.42, 0.42, 0.44, 1)   # bare steel showing through the bluing
         rough_base, rough_span = base_rough - 0.08, 0.20
     mixc = N.new('ShaderNodeMixRGB'); mixc.inputs['Color2'].default_value = wear_col
     L.new(wear_total.outputs[0], mixc.inputs['Fac']); L.new(base_col, mixc.inputs['Color1'])
     # roughness = base + variation*span - wear*0.25
     r1 = N.new('ShaderNodeMath'); r1.operation = 'MULTIPLY_ADD'; r1.inputs[1].default_value = rough_span; r1.inputs[2].default_value = rough_base
     L.new(var.outputs['Fac'], r1.inputs[0])
-    r2 = N.new('ShaderNodeMath'); r2.operation = 'MULTIPLY'; r2.inputs[1].default_value = -0.25 if kind == 'metal' else 0.15
+    r2 = N.new('ShaderNodeMath'); r2.operation = 'MULTIPLY'; r2.inputs[1].default_value = -0.25 if kind == 'metal' else (0.15 if kind == 'wood' else -0.12)
     L.new(wear_total.outputs[0], r2.inputs[0])
     r3 = N.new('ShaderNodeMath'); r3.operation = 'ADD'; r3.use_clamp = True
     L.new(r1.outputs[0], r3.inputs[0]); L.new(r2.outputs[0], r3.inputs[1])
@@ -376,10 +401,10 @@ def _hand(side, parent):
     bm = bmesh.new()
     finger_x = [-0.029, -0.010, 0.010, 0.029]  # index .. pinky for R (thumb at -X); mirrored for L
     finger_len = [(0.044, 0.038), (0.049, 0.042), (0.046, 0.040), (0.036, 0.032)]
-    finger_r = [0.0092, 0.0095, 0.0090, 0.0080]
+    finger_r = [0.0083, 0.0086, 0.0081, 0.0072]
     for i, fx in enumerate(finger_x):
         bmesh.ops.create_uvsphere(bm, u_segments=8, v_segments=5, radius=finger_r[i] * 0.95, matrix=Matrix.Translation((s * -fx, 0.089, 0.004)) @ Matrix.Diagonal((1.0, 1.0, 0.75, 1.0)))
-    kn = mesh_from_bm(f'knuckles_{side}', bm, glove, hand); shade_smooth(kn, 60); objs['knuckles'] = kn
+    kn = mesh_from_bm(f'knuckles_{side}', bm, get_mat('glove_pad'), hand); shade_smooth(kn, 60); objs['knuckles'] = kn
     # fingers: empty at knuckle -> seg1 mesh + empty k2 at joint -> seg2 mesh
     for i, fx in enumerate(finger_x):
         L1, L2 = finger_len[i]; r = finger_r[i]
@@ -391,9 +416,9 @@ def _hand(side, parent):
     # thumb: base at the palm side near the wrist, opposed (pointing forward-out and slightly below the palm)
     tb = empty(f'thumb_{side}', (s * 0.028, 0.024, -0.007), hand, 0.01); tb.rotation_mode = 'XYZ'
     tb.rotation_euler = Euler((math.radians(-25), math.radians(s * 20), math.radians(s * 50)), 'XYZ')
-    tseg1 = _finger_segment(f'thumb_{side}_s1', 0.040, 0.0125, 0.0105, tb, glove)
+    tseg1 = _finger_segment(f'thumb_{side}_s1', 0.040, 0.0115, 0.0097, tb, glove)
     tk2 = empty(f'thumb_{side}_k2', (0, 0.040, 0), tb, 0.008); tk2.rotation_mode = 'XYZ'
-    tseg2 = _finger_segment(f'thumb_{side}_s2', 0.034, 0.0105, 0.0085, tk2, glove, tip=True)
+    tseg2 = _finger_segment(f'thumb_{side}_s2', 0.034, 0.0097, 0.0080, tk2, glove, tip=True)
     objs['thumb'] = tb; objs['thumb_k2'] = tk2
     # thumb muscle pad (thenar) bridging palm and thumb base
     bm = bmesh.new()
@@ -460,6 +485,21 @@ def curl_fingers(objs, curls, spread=0.0, lift=None):
         objs['thumb_k2'].rotation_euler = Euler((math.radians(-a2), 0, 0), 'XYZ')
 
 # --------------------------------------------------------------------------------------- animation
+def key_hand(H, f, M=None, curl=None, elbow=None, spread=3.0, lift=None):
+    """Key one hand dict (from build_arms): optional matrix (parent space), finger curls, forearm aim at `elbow`."""
+    if M is not None: set_local_matrix(H['hand'], M)
+    if curl is not None: curl_fingers(H, curl, spread=spread, lift=lift)
+    if elbow is not None: aim_arm(H['hand'], H['arm'], elbow)
+    key_current(H['hand'], f); key_current(H['arm'], f)
+    for i in range(1, 5): key_current(H[f'f{i}'], f); key_current(H[f'f{i}_k2'], f)
+    key_current(H['thumb'], f); key_current(H['thumb_k2'], f)
+
+def set_bezier(objs):
+    for o in objs:
+        if o.animation_data and o.animation_data.action:
+            for fc in o.animation_data.action.fcurves:
+                for kp in fc.keyframe_points: kp.interpolation = 'BEZIER'; kp.easing = 'AUTO'
+
 def key(obj, frame, loc=None, rot=None, quat=None):
     """Insert location / rotation keyframes at `frame`. rot in degrees (euler XYZ)."""
     if loc is not None:
@@ -527,7 +567,7 @@ def _studio(target=(0, 0.15, 0)):
     sc.display.shading.background_type = 'VIEWPORT'; sc.display.shading.background_color = (0.30, 0.30, 0.31)
     w = sc.world or bpy.data.worlds.new('World'); sc.world = w; w.use_nodes = True
     w.color = (0.42, 0.42, 0.43)     # workbench backdrop (workbench ignores lights / world nodes)
-    w.node_tree.nodes['Background'].inputs['Color'].default_value = (0.32, 0.32, 0.33, 1); w.node_tree.nodes['Background'].inputs['Strength'].default_value = 1.0
+    w.node_tree.nodes['Background'].inputs['Color'].default_value = (0.24, 0.24, 0.25, 1); w.node_tree.nodes['Background'].inputs['Strength'].default_value = 1.0
     floor = bpy.data.objects.new('_floor', bpy.data.meshes.new('_floor')); bm = bmesh.new()
     bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=4.0); bm.to_mesh(floor.data); bm.free()
     fm = bpy.data.materials.new('_floor'); fm.use_nodes = True; fm.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (0.42, 0.42, 0.43, 1); fm.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = 0.9
@@ -537,7 +577,7 @@ def _studio(target=(0, 0.15, 0)):
         ld = bpy.data.lights.new(name, 'AREA'); ld.energy = energy; ld.size = size; ld.color = color
         lo = bpy.data.objects.new(name, ld); sc.collection.objects.link(lo); lo.location = loc
         d = Vector(target) - Vector(loc); lo.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler(); return lo
-    light('_key', (-1.2, -0.6, 1.4), 180, 1.2, (1, 0.97, 0.92)); light('_fill', (1.6, -0.8, 0.6), 70, 2.0, (0.9, 0.95, 1)); light('_rim', (0.4, 1.8, 1.0), 140, 0.8)
+    light('_key', (-1.2, -0.6, 1.4), 75, 1.2, (1, 0.97, 0.92)); light('_fill', (1.6, -0.8, 0.6), 30, 2.0, (0.9, 0.95, 1)); light('_rim', (0.4, 1.8, 1.0), 70, 0.8)
     cam = bpy.data.objects.new('_cam', bpy.data.cameras.new('_cam')); sc.collection.objects.link(cam); sc.camera = cam
     return cam
 

@@ -28,7 +28,7 @@ export class ViewModel {
   private loaded = new Map<string, LoadedWeapon>();
   swayX = 0; swayY = 0; bob = 0; kick = 0; kickYaw = 0; private lastAction = ''; private actionClip: THREE.AnimationAction | null = null;
   muzzleFlash: THREE.Sprite; muzzleLight: THREE.PointLight; flashT = 0;
-  hidden = false; viewFov = 62;
+  hidden = false; viewFov = 62; offset = { x: 0.13, y: -0.08, z: -0.27, rx: -0.05, ry: 0.0 };
   constructor(private sunDir: THREE.Vector3) {
     this.camera = new THREE.PerspectiveCamera(this.viewFov, 16 / 9, 0.01, 8);
     this.scene.add(this.pivot);
@@ -71,8 +71,9 @@ export class ViewModel {
     this.kick *= Math.pow(0.001, dt); this.kickYaw *= Math.pow(0.001, dt);
     const crouch = a.crouchT;
     const fovScale = baseFov / 90;
-    this.pivot.position.set(0.14 * fovScale + this.swayX + Math.sin(this.bob) * bobA + this.kickYaw * 0.02, -0.16 - crouch * 0.02 + this.swayY + Math.abs(Math.cos(this.bob)) * bobA * 0.7 - this.kick * 0.02, -0.33 + this.kick * 0.06);
-    this.pivot.rotation.set(this.swayY * 2 + this.kick * 0.25, this.swayX * 2 + this.kickYaw * 0.15, Math.sin(this.bob) * bobA * 0.6);
+    const o = this.offset;
+    this.pivot.position.set(o.x * fovScale + this.swayX + Math.sin(this.bob) * bobA + this.kickYaw * 0.02, o.y - crouch * 0.02 + this.swayY + Math.abs(Math.cos(this.bob)) * bobA * 0.7 - this.kick * 0.02, o.z + this.kick * 0.06);
+    this.pivot.rotation.set(o.rx + this.swayY * 2 + this.kick * 0.25, o.ry + this.swayX * 2 + this.kickYaw * 0.15, Math.sin(this.bob) * bobA * 0.6);
     if (cur) {
       const act = w.action + (w.action === 'reload' ? '' : '');
       const key = act + ':' + w.recoilIndex;

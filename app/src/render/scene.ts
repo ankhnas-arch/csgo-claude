@@ -4,6 +4,7 @@ import type { Actor } from '../sim/actor';
 import { SUN_DIR, MAP_BOUNDS, CAMERAS } from '../data/map/layout';
 import { MapBuilder } from './mapBuilder';
 import { makeSky } from './sky';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { CharacterRig } from './characters';
 import { Effects } from './effects';
 import { ViewModel, loadWeaponGLTF } from './viewmodel';
@@ -38,8 +39,10 @@ export class SceneView {
     this.hemi = new THREE.HemisphereLight('#a9c4ea', '#8a7658', 1.15); this.scene.add(this.hemi);
     this.scene.add(new THREE.AmbientLight('#ffffff', 0.12));
     this.scene.add(makeSky());
+    // image-based lighting so metals/glossy materials have something to reflect (neutral room, low intensity)
+    const pmrem = new THREE.PMREMGenerator(this.renderer); const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; this.scene.environment = envTex; this.scene.environmentIntensity = 0.35; pmrem.dispose();
     this.effects = new Effects(quality); this.effects.reducedMotion = reducedMotion; this.scene.add(this.effects.group);
-    this.viewModel = new ViewModel(sd);
+    this.viewModel = new ViewModel(sd); this.viewModel.scene.environment = envTex; this.viewModel.scene.environmentIntensity = 0.6;
     this.bombProp = makeBombProp(); this.bombLed = this.bombProp.getObjectByName('led') as THREE.Mesh; this.bombProp.visible = false; this.scene.add(this.bombProp);
     void MAP_BOUNDS;
   }

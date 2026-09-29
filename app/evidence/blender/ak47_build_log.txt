@@ -1,23 +1,23 @@
 [0s] geometry built: receiver=1218, safety=140, barrel=1716, hg_retainers=304, handguard=632, mag=1152, grip=428, trigger_guard=272, trigger=92, stock=436, butt_plate=108, sling_loop=44, bolt=420
-  baked receiver: metal 1024x1024 basecolor+roughness in 32.9s
-  baked mag: metal 1024x1024 basecolor+roughness in 24.1s
-  baked stock: wood 1024x1024 basecolor+roughness in 30.3s
-  baked handguard: wood 1024x1024 basecolor+roughness in 45.8s
-[133s] bakes done in 133.1s
+  baked receiver: metal 1024x1024 basecolor+roughness in 10.1s
+  baked mag: metal 1024x1024 basecolor+roughness in 6.5s
+  baked stock: wood 1024x1024 basecolor+roughness in 7.5s
+  baked handguard: wood 1024x1024 basecolor+roughness in 10.9s
+[35s] bakes done in 35.0s
 world copy: 1400 tris
 arms tris: 4744
-[134s] tri counts: gun(viewmodel)=6962, arms=4744, world=1400, total=13106
+[35s] tri counts: gun(viewmodel)=6962, arms=4744, world=1400, total=13106
   per object: cuff_L=124, sleeve_L=220, fL_1_s2=136, fL_1_s1=116, fL_2_s2=136, fL_2_s1=116, fL_3_s2=136, fL_3_s1=116, fL_4_s2=136, fL_4_s1=116, knuckles_L=256, palm_L=412, thenar_L=100, thumb_L_s2=136, thumb_L_s1=116, cuff_R=124, sleeve_R=220, fR_1_s2=136, fR_1_s1=116, fR_2_s2=136, fR_2_s1=116, fR_3_s2=136, fR_3_s1=116, fR_4_s2=136, fR_4_s1=116, knuckles_R=256, palm_R=412, thenar_R=100, thumb_R_s2=136, thumb_R_s1=116, barrel=1716, hg_retainers=304, bolt=420, butt_plate=108, grip=428, handguard=632, mag=1152, receiver=1218, safety=140, stock=436, sling_loop=44, trigger=92, trigger_guard=272, world=1400
-  materials: ['glove', 'metal_blued', 'metal_blued_mag', 'metal_blued_receiver', 'polymer', 'rubber', 'sleeve', 'steel_bright', 'wood', 'wood_handguard', 'wood_stock']; images: [('ak47_handguard_basecolor.jpg', 1024), ('ak47_handguard_roughness.jpg', 1024), ('ak47_mag_basecolor.jpg', 1024), ('ak47_mag_roughness.jpg', 1024), ('ak47_receiver_basecolor.jpg', 1024), ('ak47_receiver_roughness.jpg', 1024), ('ak47_stock_basecolor.jpg', 1024), ('ak47_stock_roughness.jpg', 1024)]
-  exported /home/user/csgo-claude/app/public/assets/weapons/ak47.glb (2.21 MB)
+  materials: ['glove', 'glove_pad', 'metal_blued', 'metal_blued_mag', 'metal_blued_receiver', 'polymer', 'rubber', 'sleeve', 'steel_bright', 'wood', 'wood_handguard', 'wood_stock']; images: [('ak47_handguard_basecolor.jpg', 1024), ('ak47_handguard_roughness.jpg', 1024), ('ak47_mag_basecolor.jpg', 1024), ('ak47_mag_roughness.jpg', 1024), ('ak47_receiver_basecolor.jpg', 1024), ('ak47_receiver_roughness.jpg', 1024), ('ak47_stock_basecolor.jpg', 1024), ('ak47_stock_roughness.jpg', 1024)]
+  exported /home/user/csgo-claude/app/public/assets/weapons/ak47.glb (2.17 MB)
   wrote /home/user/csgo-claude/app/public/assets/weapons/ak47.anim.json
-  saved /home/user/csgo-claude/app/assets-source/blender/ak47.blend (1.02 MB)
-  render times: side 47.0s, front 42.6s, threequarter 60.7s, fp 25.7s, anim strips (workbench) 29.5s
+  saved /home/user/csgo-claude/app/assets-source/blender/ak47.blend (0.99 MB)
+  render times: side 11.8s, front 10.7s, threequarter 35.4s, fp 21.1s, anim strips (workbench) 25.7s
 VERIFY GLB /home/user/csgo-claude/app/public/assets/weapons/ak47.glb
   animation 'Scene': 19 channels, time 0.000..9.333s = frames 0..280
   nodes (72): cuff_L, sleeve_L, arm_L, fL_1_s2, fL_1_k2, fL_1_s1, fL_1, fL_2_s2, fL_2_k2, fL_2_s1, fL_2, fL_3_s2, fL_3_k2, fL_3_s1, fL_3, fL_4_s2, fL_4_k2, fL_4_s1, fL_4, knuckles_L, palm_L, thenar_L, thumb_L_s2, thumb_L_k2, thumb_L_s1, thumb_L, hand_L, cuff_R, sleeve_R, arm_R, fR_1_s2, fR_1_k2, fR_1_s1, fR_1, fR_2_s2, fR_2_k2, fR_2_s1, fR_2, fR_3_s2, fR_3_k2, fR_3_s1, fR_3, fR_4_s2, fR_4_k2, fR_4_s1, fR_4, knuckles_R, palm_R, thenar_R, thumb_R_s2, thumb_R_k2, thumb_R_s1, thumb_R, hand_R, arms, hg_retainers, barrel, bolt, butt_plate, grip, handguard, mag, eject, muzzle, safety, receiver, sling_loop, stock, trigger, trigger_guard, world, weapon
-  materials: glove, sleeve, metal_blued, rubber, steel_bright, polymer, wood_handguard, metal_blued_mag, metal_blued_receiver, wood_stock
+  materials: glove, sleeve, glove_pad, metal_blued, rubber, steel_bright, polymer, wood_handguard, metal_blued_mag, metal_blued_receiver, wood_stock
   triangles total 13106: cuff_L=124, sleeve_L=220, fL_1_s2=136, fL_1_s1=116, fL_2_s2=136, fL_2_s1=116, fL_3_s2=136, fL_3_s1=116, fL_4_s2=136, fL_4_s1=116, knuckles_L=256, palm_L=412, thenar_L=100, thumb_L_s2=136, thumb_L_s1=116, cuff_R=124, sleeve_R=220, fR_1_s2=136, fR_1_s1=116, fR_2_s2=136, fR_2_s1=116, fR_3_s2=136, fR_3_s1=116, fR_4_s2=136, fR_4_s1=116, knuckles_R=256, palm_R=412, thenar_R=100, thumb_R_s2=136, thumb_R_s1=116, hg_retainers=304, barrel=1716, bolt=420, butt_plate=108, grip=428, handguard=632, mag=1152, safety=140, receiver=1218, sling_loop=44, stock=436, trigger=92, trigger_guard=272, world=1400
-  images: 8, size 2.21 MB
+  images: 8, size 2.17 MB
   bpy re-import: 1 actions, names ['Scene'], frame range 0..280; objects 72
-[341s] done
+[141s] done

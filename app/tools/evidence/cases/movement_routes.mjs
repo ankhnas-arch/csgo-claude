@@ -21,20 +21,20 @@ export default async function (c) {
   for (const r of ROUTES) {
     await c.ev(([x, z, yaw]) => window.__cs2.teleport(x, z, yaw), r.from); await sleep(300); c.mx = 640; c.my = 360;
     const t0 = Date.now(); let ok = true, stuck = 0;
-    for (const [x, z] of r.pts) { const res = await c.walkTo(x, z, { timeout: 30000 }); stuck += res.stuck; if (!res.ok) { ok = false; c.note(`${r.name}: failed to reach (${x},${z}) — at ${JSON.stringify((await c.state()).player).slice(0, 80)}`); break; } }
+    let simT = 0; for (const [x, z] of r.pts) { const res = await c.walkTo(x, z, { simBudget: 25 }); stuck += res.stuck; simT += res.simTime; if (!res.ok) { ok = false; c.note(`${r.name}: failed to reach (${x},${z}) — at ${JSON.stringify((await c.state()).player).slice(0, 80)}`); break; } }
     const time = (Date.now() - t0) / 1000; const p = (await c.state()).player;
-    log.push({ route: r.name, ok, seconds: +time.toFixed(1), stuckEvents: stuck, end: [p.x, p.y, p.z] });
-    c.step(r.name, ok, `${time.toFixed(1)} s, stuck events ${stuck}`);
+    log.push({ route: r.name, ok, realSeconds: +time.toFixed(1), simSeconds: +simT.toFixed(1), stuckEvents: stuck, end: [p.x, p.y, p.z] });
+    c.step(r.name, ok, `${simT.toFixed(1)} sim-s (${time.toFixed(0)} s real), stuck events ${stuck}`);
     await c.shot(`route_${log.length}`);
   }
   const walls = [[0, 51.5, 0], [42.5, 20, 90], [-45.5, -40, 270], [7.5, -50, 90]];
   for (const [x, z, yaw] of walls) { await c.ev(([x, z, yaw]) => window.__cs2.teleport(x, z, yaw), [x, z, yaw]); await sleep(200); c.mx = 640; c.my = 360; await c.aimAt(yaw, 0); await c.hold('KeyW', 2000); const p = (await c.state()).player; const inside = Math.abs(p.x) < 56 && Math.abs(p.z) < 58 && p.y > -3; c.step(`boundary press at (${x},${z})`, inside, `end ${p.x.toFixed(1)},${p.y.toFixed(1)},${p.z.toFixed(1)}`); }
   await c.ev(() => window.__cs2.teleport(0, -20, 0)); await sleep(200); c.mx = 640; c.my = 360; await c.aimAt(0, 0);
-  const p0 = (await c.state()).player; await page.keyboard.down('ControlLeft'); await sleep(600); const pc = (await c.state()).player; await c.hold('KeyW', 4000); await page.keyboard.up('ControlLeft'); const p1 = (await c.state()).player;
+  const p0 = (await c.state()).player; await page.keyboard.down('ControlLeft'); await c.simSleep(0.5); const pc = (await c.state()).player; await page.keyboard.down('KeyW'); await c.simSleep(3.0); await page.keyboard.up('KeyW'); await page.keyboard.up('ControlLeft'); const p1 = (await c.state()).player;
   c.step('crouch lowers eye and crouch-walk through mid doors', pc.crouch && p1.z < p0.z - 2.5, `moved ${(p0.z - p1.z).toFixed(1)} m`); await c.shot('doors_crouch');
-  await c.ev(() => window.__cs2.teleport(10, -15, 90)); await sleep(200); c.mx = 640; c.my = 360; const r2 = await c.walkTo(19, -15); c.step('catwalk stairs climb to short (y≈2)', r2.ok && (await c.state()).player.y > 1.6);
-  await c.ev(() => window.__cs2.teleport(0, 10, 0)); await sleep(200); const yj0 = (await c.state()).player.y; await c.press('Space'); await sleep(320); const yj1 = (await c.state()).player.y; await sleep(1200); c.step('jump rises and lands', yj1 > yj0 + 0.4 && Math.abs((await c.state()).player.y - yj0) < 0.2, `peak sample +${(yj1 - yj0).toFixed(2)}`);
-  await c.ev(() => window.__cs2.teleport(0, 4.4, 0)); await sleep(200); c.mx = 640; c.my = 360; await c.aimAt(0, 0); await page.keyboard.down('KeyW'); await sleep(150); await c.press('Space'); await sleep(900); await page.keyboard.up('KeyW'); const yc = (await c.state()).player.y; c.step('jump onto Xbox crate', yc > 1.3, `y=${yc.toFixed(2)}`); await c.shot('xbox_top');
+  await c.ev(() => window.__cs2.teleport(10, -15, 90)); await sleep(200); c.mx = 640; c.my = 360; const r2 = await c.walkTo(19, -15, { simBudget: 15 }); c.step('catwalk stairs climb to short (y≈2)', r2.ok && (await c.state()).player.y > 1.6);
+  await c.ev(() => window.__cs2.teleport(0, 10, 0)); await sleep(200); const yj0 = (await c.state()).player.y; await c.press('Space'); await c.simSleep(0.35); const yj1 = (await c.state()).player.y; await c.simSleep(1.2); c.step('jump rises and lands', yj1 > yj0 + 0.4 && Math.abs((await c.state()).player.y - yj0) < 0.2, `peak sample +${(yj1 - yj0).toFixed(2)}, landed y=${(await c.state()).player.y.toFixed(2)}`);
+  await c.ev(() => window.__cs2.teleport(0, 4.4, 0)); await sleep(200); c.mx = 640; c.my = 360; await c.aimAt(0, 0); await page.keyboard.down('KeyW'); await c.simSleep(0.15); await c.press('Space'); await c.simSleep(1.0); await page.keyboard.up('KeyW'); await c.simSleep(0.4); const yc = (await c.state()).player.y; c.step('jump onto Xbox crate (1.6 m)', yc > 1.3, `y=${yc.toFixed(2)}`); await c.shot('xbox_top');
   c.note(`routes: ${JSON.stringify(log)}`);
   c.step('no console errors', c.log.errors.length === 0, c.log.errors.slice(0, 3));
 }

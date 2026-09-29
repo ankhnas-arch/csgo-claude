@@ -45,6 +45,7 @@ export function installDebugApi(app: App) {
     freezeBots: (v: boolean) => { const g = app.game; if (!g) return; for (const [, b] of g.brains) (b as any).frozen = v; g.botsFrozen = v; },
     giveBombToPlayer: () => { const g = app.game; if (!g) return; const c = g.actorById(g.match.bomb.carrierId); if (c && c !== g.player) c.inv.bomb = null; g.items = g.items.filter(i => i.kind !== 'bomb'); g.match.giveBomb(g.player); },
     setRefCamera: (id: string | null) => app.setReferenceCamera(id),
+    vmOffset: (o: Partial<{ x: number; y: number; z: number; rx: number; ry: number }>) => { Object.assign(app.scene.viewModel.offset, o); return app.scene.viewModel.offset; },
     setFreeCamera: (pos: [number, number, number], look: [number, number, number], fov = 80) => app.scene.setFreeCamera(pos, look, fov),
     cameras: () => app.cameras,
     startMatch: (team: 'T' | 'CT', difficulty: 'easy' | 'hard', seed: number, economy: 'showcase' | 'standard' = 'showcase') => app.startMatch({ team, difficulty, seed, economy }),
