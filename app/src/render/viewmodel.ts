@@ -79,7 +79,7 @@ export class ViewModel {
       const key = act + ':' + w.recoilIndex;
       if (key !== this.lastAction) {
         this.lastAction = key;
-        if (w.action === 'fire') { this.play(cur, 'fire', w.actionDur, true); this.kick = 1; this.kickYaw = (Math.random() - 0.5) * 0.6; this.flash(cur); }
+        if (w.action === 'fire') { const clip = w.def.category === 'knife' && w.stab && cur.clips.has('fire2') ? 'fire2' : 'fire'; this.play(cur, clip, w.actionDur, true); if (w.def.category !== 'knife') { this.kick = 1; this.kickYaw = (Math.random() - 0.5) * 0.6; } this.flash(cur); }
         else if (w.action === 'reload') this.play(cur, 'reload', w.actionDur, false);
         else if (w.action === 'inspect') this.play(cur, 'inspect', w.actionDur, false);
         else if (w.action === 'rechamber') this.play(cur, 'rechamber', w.actionDur, false);

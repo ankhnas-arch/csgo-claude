@@ -23,7 +23,7 @@ export class BotBrain {
   burst = 0; burstPause = 0; aimErrX = 0; aimErrY = 0; aimErrT = 0; wantHead = false;
   usedUtility = new Set<string>(); lastThrow = 0; bought = false; strafeDir = 1; strafeT = 0; crouchHold = false;
   flashedRetreat: [number, number] | null = null; wanderT = 0;
-  jumpRequest = false; sidestep = 0; sidestepT = 0;
+  jumpRequest = false; sidestep = 0; sidestepT = 0; engageT = 0; pushT = 0;
   constructor(public a: Actor, public g: Game, public p: BotProfile) {}
   onRoundStart() { this.goal = null; this.path = null; this.target = null; this.memory = null; this.usedUtility.clear(); this.bought = false; this.hold = null; this.stuckT = 0; this.stuckCount = 0; this.reaction = 0; this.flashedRetreat = null; this.planT = 0; }
   onSideSwitch() { this.onRoundStart(); }
@@ -51,7 +51,11 @@ export class BotBrain {
     // in fire: get out
     const fire = g.grenades.fires.find(f => Math.hypot(f.x - a.x, f.z - a.z) < g.grenades.fireRadius(f) + 0.8 && Math.abs(f.y - a.y) < 1.5);
     if (fire) { const dx = a.x - fire.x, dz = a.z - fire.z; const l = Math.hypot(dx, dz) || 1; const tx = a.x + dx / l * 4, tz = a.z + dz / l * 4; this.setGoal([tx, tz], 'escape fire'); this.followPath(inp, dt, true); return inp; }
-    const farTarget = this.target ? Math.hypot(this.target.x - a.x, this.target.z - a.z) > this.effectiveRange() : false;
+    // engagement pacing: a duel that drags on (> 5 s) turns into a push toward the objective/target for 3 s so bots do not trade shots forever
+    if (this.target) { this.engageT += dt; if (this.engageT > 5 && this.pushT <= 0) { this.pushT = 3; this.engageT = 0; } } else this.engageT = 0;
+    if (this.pushT > 0) this.pushT -= dt;
+    const holdRange = this.role === 'planter' && a.inv.bomb ? Math.min(14, this.effectiveRange()) : this.effectiveRange();
+    const farTarget = this.target ? (Math.hypot(this.target.x - a.x, this.target.z - a.z) > holdRange || this.pushT > 0) : false;
     if (this.target) this.engage(inp, dt, farTarget);
     else this.utility(inp);
     // objective interaction
@@ -158,7 +162,7 @@ export class BotBrain {
       const stationaryBonus = a.speed2d < 0.5 ? 1.5 : 1;
       this.reaction += dt * stationaryBonus * (this.target === best ? 3 : 1);
       this.memory = { x: best.x, y: best.y, z: best.z, time: g.time, actorId: best.id };
-      if (this.reaction >= this.p.reactionTime) { if (this.target !== best) { this.target = best; this.aimErrT = 0; this.burst = 0; } this.targetSeenTime = g.time; }
+      if (this.reaction >= this.p.reactionTime) { if (this.target !== best) { this.target = best; this.aimErrT = 0; this.burst = 0; this.engageT = 0; } this.targetSeenTime = g.time; }
     } else {
       this.reaction = Math.max(0, this.reaction - dt * 2);
       if (this.target && g.time - this.targetSeenTime > 0.35) { this.target = null; }

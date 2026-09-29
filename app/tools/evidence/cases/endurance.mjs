@@ -11,7 +11,7 @@ export default async function (c) {
     if (s.phase === 'freeze' && s.round !== lastRound) { lastRound = s.round; const p = await c.ev(() => window.__cs2.perf()); samples.push({ minute: +((Date.now() - t0) / 60000).toFixed(1), round: s.round, replays, rigs: p.rigs, items: p.items, grenadeMeshes: p.grenadeMeshes, sim: p.sim, effects: p.effects, geometries: p.rendererInfo.geometries, textures: p.rendererInfo.textures, heapMB: p.memory ? +(p.memory.usedJSHeap / 1048576).toFixed(1) : null, simLoops: p.simLoops, audioVoices: p.audioVoices }); if (samples.length % 3 === 0) await c.shot(`endurance_r${s.round}_rp${replays}`); }
     // occasionally make the player fight a little (input) then die/spectate naturally
     if (s.phase === 'live' && s.player.alive && Math.random() < 0.2) { await c.hold('KeyW', 500); await c.click(200); }
-    await sleep(1500);
+    await c.wait(1500);
   }
   c.note(JSON.stringify(samples));
   const first = samples[1], last = samples[samples.length - 1];

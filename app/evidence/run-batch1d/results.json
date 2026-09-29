@@ -1,0 +1,123 @@
+[
+  {
+    "name": "buy_economy",
+    "status": "PASS",
+    "steps": [
+      {
+        "name": "buy menu opens with B in spawn during freeze",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "buy M4A4 ($2900)",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought m4a4\",\"cost\":2900}"
+      },
+      {
+        "name": "duplicate rifle refused",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Already own this weapon\",\"cost\":0}"
+      },
+      {
+        "name": "kevlar refused when money short",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Not enough money ($650)\",\"cost\":0}"
+      },
+      {
+        "name": "kevlar+helmet $1000",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought helmet\",\"cost\":1000}"
+      },
+      {
+        "name": "defuse kit $400 (CT)",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought defuser\",\"cost\":400}"
+      },
+      {
+        "name": "duplicate sidearm refused",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Already own this weapon\",\"cost\":0}"
+      },
+      {
+        "name": "grenade he",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought he\",\"cost\":300}"
+      },
+      {
+        "name": "grenade flash",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought flash\",\"cost\":200}"
+      },
+      {
+        "name": "grenade flash",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought flash\",\"cost\":200}"
+      },
+      {
+        "name": "grenade smoke",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought smoke\",\"cost\":300}"
+      },
+      {
+        "name": "5th grenade refused (limit 4)",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Grenade limit reached (4)\",\"cost\":0}"
+      },
+      {
+        "name": "3rd flash refused",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Grenade limit reached (4)\",\"cost\":0}"
+      },
+      {
+        "name": "AK-47 not listed for CT",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "inventory matches purchases",
+        "ok": true,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"CT\",\"alive\":true,\"health\":100,\"armor\":100,\"helmet\":true,\"money\":6600,\"x\":3,\"y\":0.05,\"z\":-48,\"yaw\":3.142,\"pitch\":0,\"active\":\"m4a4\",\"action\":\"idle\",\"mag\":30,\"reserve\":120,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":false,\"kit\":true,\"grenades\":[\"he\",\"flash\",\"flash\",\"smoke\"],\"primary\":\"m4a4\",\"secondary\":\"usp\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "money never negative",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "drop primary with G",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "rebuy restores rifle",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "buy refused outside spawn zone",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "buy refused after buy time expiry",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "no console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "notes": [],
+    "shots": [
+      "evidence/run-batch1d/buy_economy/buy_open.png",
+      "evidence/run-batch1d/buy_economy/buy_insufficient.png",
+      "evidence/run-batch1d/buy_economy/buy_after.png",
+      "evidence/run-batch1d/buy_economy/buy_outside_zone.png",
+      "evidence/run-batch1d/buy_economy/buy_expired.png"
+    ],
+    "errors": [],
+    "seconds": 90
+  }
+]

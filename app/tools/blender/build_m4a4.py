@@ -16,12 +16,18 @@ POSE_ONLY = '--pose-only' in sys.argv
 # local material specs (black polymer / phosphate metal); setdefault so a concurrent common.py edit wins if present
 MATERIAL_SPECS.setdefault('polymer_black', ((0.030, 0.031, 0.033), 0.0, 0.66, 0.0))
 MATERIAL_SPECS.setdefault('metal_dark', ((0.045, 0.048, 0.055), 1.0, 0.40, 0.0))
+MATERIAL_SPECS['metal_blued'] = ((0.058, 0.063, 0.075), 1.0, 0.48, 0.0)     # darker phosphate/anodised tone for the M4 (this process only)
 MB, SB, PB, RB, MD = 'metal_blued', 'steel_bright', 'polymer_black', 'rubber', 'metal_dark'
 
 # ----------------------------------------------------------------------------------------------- local helpers
+THUMB_BASE = {'R': Euler((math.radians(-25), math.radians(-20), math.radians(-50)), 'XYZ'), 'L': Euler((math.radians(-25), math.radians(20), math.radians(50)), 'XYZ')}
+def curl_abs(H, side, curls, spread=0.0, lift=None):
+    """curl_fingers with an absolute thumb (curl_fingers accumulates the thumb base rotation on every call)."""
+    H['thumb'].rotation_euler = THUMB_BASE[side].copy(); curl_fingers(H, curls, spread=spread, lift=lift)
+
 def k_hand(H, f, M=None, curl=None, elbow=None, spread=3.0, lift=None):
     if M is not None: set_local_matrix(H['hand'], M)
-    if curl is not None: curl_fingers(H, curl, spread=spread, lift=lift)
+    if curl is not None: curl_abs(H, 'R' if H['hand'].name.endswith('R') else 'L', curl, spread=spread, lift=lift)
     if elbow is not None: aim_arm(H['hand'], H['arm'], elbow)
     key_current(H['hand'], f); key_current(H['arm'], f)
     for i in range(1, 5): key_current(H[f'f{i}'], f); key_current(H[f'f{i}_k2'], f)
@@ -59,7 +65,9 @@ lower_prof = [(-0.046, 0.049), (-0.046, 0.031), (-0.039, 0.017), (-0.030, 0.005)
 lower = profile_extrude('lower', lower_prof, -0.0175, 0.0175, MB); add_bevel(lower, 0.002, 2); parts.append(lower)
 # upper receiver: squarish superellipse tube around the bore, flat-top
 up_rings = [ring_y(ellipse2d(0.036, 0.036, 20, k=3.0), -0.050, dz=B), ring_y(ellipse2d(0.036, 0.036, 20, k=3.0), 0.174, dz=B)]
-upper = loft('upper', up_rings, True, True, MB); add_bevel(upper, 0.002, 2); parts.append(upper)
+upper = loft('upper', up_rings, True, True, MB); add_bevel(upper, 0.002, 2); apply_mods(upper)
+# ejection port through the right wall (cut on the standalone upper: EXACT booleans misbehave on the joined multi-shell receiver)
+boolean_cut(upper, box('cut_port', (0.019, 0.092, B + 0.001), (0.012, 0.066, 0.022))); parts.append(upper)
 # rail base + teeth on the flat top (M1913), from the rear of the upper to the front
 railb = box('rail_base', (0, 0.062, B + 0.021), (0.017, 0.222, 0.008), MB); parts.append(railb)
 rail_teeth(parts, 'top', -0.047, 0.171, off=0.0265)
@@ -88,10 +96,7 @@ sl = box('sel_lever', (-0.0200, -0.020, 0.036), (0.004, 0.030, 0.007), MB); add_
 parts.append(cyl('mag_release', 0.0065, 0.008, (0.0215, 0.066, 0.031), 'X', 16, mat=MB))
 fence = profile_extrude('mag_fence', [(0.056, 0.020), (0.076, 0.020), (0.076, 0.042), (0.056, 0.042)], 0.0175, 0.0210, MB); parts.append(fence)
 boolean_cut(fence, cyl('fence_cut', 0.0095, 0.010, (0.0215, 0.066, 0.031), 'X', 16))
-receiver = join(parts, 'receiver', weapon)
-# ejection port through the right wall of the upper
-boolean_cut(receiver, box('cut_port', (0.019, 0.092, B + 0.001), (0.012, 0.066, 0.022)))
-shade_smooth(receiver, 30)
+receiver = join(parts, 'receiver', weapon); shade_smooth(receiver, 30)
 # ejection-port dust cover, hinged open (hangs down along the right side)
 cover = box('dust_cover', (0, 0, -0.012), (0.0015, 0.066, 0.024), MB); add_bevel(cover, 0.0007, 1); apply_mods(cover)
 cover.location = (0.0205, 0.092, B - 0.010); cover.rotation_euler = Euler((0, math.radians(-20), 0), 'XYZ')
@@ -183,15 +188,14 @@ add_bevel(trigger, 0.0008, 1); apply_mods(trigger); trigger.location = TRIG_ORIG
 # ----------------------------------------------------------------------------------------------- telescoping stock (polymer) + butt pad
 sp = []
 stock_prof = [(-0.132, B + 0.022), (-0.132, B - 0.004), (-0.150, B - 0.014), (-0.178, B - 0.026), (-0.262, -0.006), (-0.275, -0.006), (-0.275, B + 0.022)]
-sb = profile_extrude('stock_body', stock_prof, -0.0195, 0.0195, PB); add_bevel(sb, 0.003, 2); sp.append(sb)
+sb = profile_extrude('stock_body', stock_prof, -0.0195, 0.0195, PB); add_bevel(sb, 0.003, 2); apply_mods(sb)
+boolean_cut(sb, box('cut_slot', (0, -0.222, 0.030), (0.060, 0.050, 0.018)))      # lightening slot through the toe
+sp.append(sb)
 # cheek-weld top rounded: a superellipse tube over the buffer tube region on the stock
 sp.append(loft('stock_top', [ring_y(ellipse2d(0.040, 0.040, 16, k=2.2), -0.132, dz=B + 0.002), ring_y(ellipse2d(0.040, 0.040, 16, k=2.2), -0.274, dz=B + 0.002)], True, True, PB))
 lever = box('stock_lever', (0, -0.156, B - 0.026), (0.016, 0.034, 0.010), PB); add_bevel(lever, 0.002, 1); sp.append(lever)
 sp.append(box('stock_sling', (0, -0.262, 0.006), (0.006, 0.014, 0.004), MB))
-stock = join(sp, 'stock', weapon)
-# lightening slot in the toe (both sides), then smooth
-boolean_cut(stock, box('cut_slot', (0, -0.222, 0.030), (0.060, 0.050, 0.018)))
-shade_smooth(stock, 30)
+stock = join(sp, 'stock', weapon); shade_smooth(stock, 30)
 butt = box('butt_pad', (0, -0.280, (B + 0.022 - 0.006) / 2), (0.040, 0.010, B + 0.028), RB, weapon); add_bevel(butt, 0.003, 2); apply_mods(butt); shade_smooth(butt, 30)
 
 GUN_MESHES = [receiver, cover, bolt, carrier, barrel, handguard, mag, grip, guard, trigger, stock, butt]
@@ -212,14 +216,14 @@ if not POSE_ONLY:
 # ----------------------------------------------------------------------------------------------- arms + pose
 A = build_arms(weapon); R, Lh = A['R'], A['L']
 R_ELBOW = (0.14, -0.42, -0.24)
-R_M = hand_matrix_at((-0.029, 0.092, 0.001), (0.023, -0.013, -0.032), (-0.25, 0.86, -0.44), (-1, 0, 0))
-R_CURL = {'f1': (22, 30), 'f2': (85, 95), 'f3': (88, 98), 'f4': (90, 100), 'thumb': (45, 50)}
-set_local_matrix(R['hand'], R_M); curl_fingers(R, R_CURL, spread=1, lift={'f1': 35}); aim_arm(R['hand'], R['arm'], R_ELBOW)
+R_M = hand_matrix_at((-0.029, 0.092, 0.001), (0.031, -0.008, -0.028), (-0.25, 0.86, -0.44), (-1, 0, 0))
+R_CURL = {'f1': (30, 40), 'f2': (85, 95), 'f3': (88, 98), 'f4': (90, 100), 'thumb': (45, 50)}
+set_local_matrix(R['hand'], R_M); curl_abs(R, 'R', R_CURL, spread=1, lift={'f1': 55}); aim_arm(R['hand'], R['arm'], R_ELBOW)
 # left hand under the quad rail: palm up/right cupping the bottom rail, fingers over the right rail, thumb along the left
 L_FWD = (0.90, 0.22, -0.30); L_NRM = (0.30, 0, 0.95); L_ELBOW = (-0.12, -0.10, -0.32)
-L_REST_CURL = {'f1': (60, 50), 'f2': (64, 55), 'f3': (64, 55), 'f4': (66, 58), 'thumb': (10, 25)}
+L_REST_CURL = {'f1': (68, 62), 'f2': (72, 66), 'f3': (72, 66), 'f4': (74, 68), 'thumb': (10, 25)}
 L_REST_M = hand_matrix_at((0, 0.046, -0.014), (-0.004, 0.290, B - 0.032), L_FWD, L_NRM)
-set_local_matrix(Lh['hand'], L_REST_M); curl_fingers(Lh, L_REST_CURL, spread=3); aim_arm(Lh['hand'], Lh['arm'], L_ELBOW)
+set_local_matrix(Lh['hand'], L_REST_M); curl_abs(Lh, 'L', L_REST_CURL, spread=3); aim_arm(Lh['hand'], Lh['arm'], L_ELBOW)
 log(f'arms tris: {sum(tri_report(A["arms"]).values())}')
 
 # ----------------------------------------------------------------------------------------------- animation (single 30 fps timeline)
@@ -281,8 +285,12 @@ if POSE_ONLY:
     V = [('handR_right', (0.32, -0.28, -0.10), (0.02, -0.03, -0.04), 70), ('handR_left', (-0.32, -0.22, -0.12), (0.0, -0.03, -0.04), 70),
          ('handL_left', (-0.36, 0.16, -0.10), (-0.02, 0.29, 0.02), 70), ('handL_below', (0.02, 0.32, -0.42), (0, 0.29, 0.02), 50)]
     render_closeups(WID, V, 0)
-    render_closeups(WID, [('mag_grab', (-0.36, 0.02, -0.22), (-0.01, 0.11, -0.09), 60), ('mag_grab_r', (0.34, -0.03, -0.20), (0.0, 0.11, -0.09), 60)], 118)
-    render_closeups(WID, [('charge', (-0.30, -0.15, 0.24), (0.0, -0.05, 0.07), 60), ('charge_r', (0.30, -0.25, 0.22), (0.0, -0.05, 0.07), 60)], 172)
+    def at(f, ob, off):        # world position of an object at frame f (+ offset) for closeup targets
+        bpy.context.scene.frame_set(f); return tuple(ob.matrix_world.translation + Vector(off))
+    render_closeups(WID, [('mag_grab', tuple(Vector(at(118, mag, (0, 0, -0.10))) + Vector((-0.35, -0.08, -0.05))), at(118, mag, (0, 0, -0.10)), 60),
+                          ('mag_grab_r', tuple(Vector(at(118, mag, (0, 0, -0.10))) + Vector((0.35, -0.10, -0.05))), at(118, mag, (0, 0, -0.10)), 60)], 118)
+    render_closeups(WID, [('charge', tuple(Vector(at(172, bolt, (0, 0, 0))) + Vector((-0.30, -0.12, 0.18))), at(172, bolt, (0, 0.03, 0)), 60),
+                          ('charge_r', tuple(Vector(at(172, bolt, (0, 0, 0))) + Vector((0.30, -0.20, 0.16))), at(172, bolt, (0, 0.03, 0)), 60)], 172)
     log(f'[{time.time() - T0:.0f}s] pose-only closeups done'); sys.exit(0)
 
 # ----------------------------------------------------------------------------------------------- export, json, save
@@ -299,7 +307,7 @@ bpy.ops.file.pack_all(); bpy.ops.wm.save_as_mainfile(filepath=str(blend), compre
 
 # ----------------------------------------------------------------------------------------------- review renders + verification
 if '--no-render' not in sys.argv:
-    render_review(WID, CLIPS, arms=A['arms'], world=world, gun_center=(0, 0.14, 0.02), gun_len=0.86, turntable=False)
+    render_review(WID, CLIPS, arms=A['arms'], world=world, gun_center=(0, 0.14, 0.02), gun_len=1.0, turntable=False)
 verify_glb(glb)
 log(f'[{time.time() - T0:.0f}s] done')
 Path(EVIDENCE / f'{WID}_build_log.txt').write_text('\n'.join(LOG))

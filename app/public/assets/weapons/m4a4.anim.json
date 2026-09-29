@@ -1,0 +1,30 @@
+{
+ "fps": 30,
+ "clips": {
+  "idle": [
+   0,
+   60
+  ],
+  "equip": [
+   60,
+   90
+  ],
+  "fire": [
+   90,
+   101
+  ],
+  "reload": [
+   101,
+   190
+  ],
+  "inspect": [
+   190,
+   290
+  ]
+ },
+ "events": {
+  "reload_mag_out": 122,
+  "reload_mag_in": 156,
+  "reload_end": 190
+ }
+}

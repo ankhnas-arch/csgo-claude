@@ -15,7 +15,7 @@ export default async function (c) {
     if (s.phase === 'freeze' && s.player.alive) {
       if (!s.player.primary && s.player.money >= 2700) { await c.ensureLocked(); if (await c.openBuy()) { await c.buyItem(s.player.team === 'T' ? 'ak47' : 'm4a4'); await c.buyItem('helmet'); await c.buyItem('smoke'); await c.buyItem('flash'); if (s.player.team === 'CT') await c.buyItem('defuser'); await c.closeBuy(); } }
       else if (s.player.money >= 1000 && s.player.armor < 100) { await c.ensureLocked(); if (await c.openBuy()) { await c.buyItem('helmet'); await c.buyItem('he'); await c.closeBuy(); } }
-      await sleep(1000); continue;
+      await c.wait(1000); continue;
     }
     if ((s.phase === 'live' || s.phase === 'planted') && s.player.alive) {
       // objective-driven play: T goes to A (long) and plants; CT holds A ramp / rotates to the bomb
@@ -26,14 +26,14 @@ export default async function (c) {
       let vis = null; for (const e of en) { if (await c.ev(id => window.__cs2.canSee(1, id), e.id)) { vis = e; break; } }
       if (vis) { await c.aimAtPoint(vis.x, vis.y + 1.5, vis.z); await c.click(180); roundShots++; if ((await c.state()).player.mag < 5) await c.press('KeyR'); continue; }
       if (d > 2) { const r = await c.walkTo(target[0], target[1], { timeout: 6000, tol: 1.5 }); void r; }
-      else if (s.player.team === 'T' && s.player.hasBomb && !s.bomb.planted) { await c.page.keyboard.down('KeyE'); await sleep(3600); await c.page.keyboard.up('KeyE'); }
-      else if (s.player.team === 'CT' && s.bomb.planted) { await c.aimAtPoint(s.bomb.planted.x, s.bomb.planted.y, s.bomb.planted.z); await c.page.keyboard.down('KeyE'); await sleep(11000); await c.page.keyboard.up('KeyE'); }
-      else { await c.turn(90, 0); await sleep(600); }
+      else if (s.player.team === 'T' && s.player.hasBomb && !s.bomb.planted) { await c.page.keyboard.down('KeyE'); await c.wait(3600); await c.page.keyboard.up('KeyE'); }
+      else if (s.player.team === 'CT' && s.bomb.planted) { await c.aimAtPoint(s.bomb.planted.x, s.bomb.planted.y, s.bomb.planted.z); await c.page.keyboard.down('KeyE'); await c.wait(11000); await c.page.keyboard.up('KeyE'); }
+      else { await c.turn(90, 0); await c.wait(600); }
       continue;
     }
-    await sleep(1200);
+    await c.wait(1200);
   }
-  const s = await c.state(); await sleep(800); await c.shot('match_result');
+  const s = await c.state(); await c.wait(800); await c.shot('match_result');
   c.note(`timeline: ${JSON.stringify(timeline)}`);
   const winner = s.score.T.score === 4 ? 'T' : s.score.CT.score === 4 ? 'CT' : null;
   c.step('match completed by ordinary play', s.app === 'matchEnd' && winner !== null, `final ${s.score.T.score}-${s.score.CT.score} in ${((Date.now() - t0) / 60000).toFixed(1)} min real; player shots ${roundShots}`);

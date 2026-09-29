@@ -1,0 +1,35 @@
+{
+  "name": "movement_routes",
+  "status": "FAIL",
+  "steps": [
+    {
+      "name": "T spawn -> outside long -> long doors",
+      "ok": true,
+      "detail": "7.4 sim-s (57 s real), stuck events 0"
+    },
+    {
+      "name": "Long doors -> long -> pit",
+      "ok": false,
+      "detail": "19.2 sim-s (160 s real), stuck events 15"
+    },
+    {
+      "name": "Pit -> long corner -> A ramp -> A site",
+      "ok": true,
+      "detail": "10.0 sim-s (75 s real), stuck events 2"
+    },
+    {
+      "name": "case threw",
+      "ok": false,
+      "detail": "page.evaluate: Target page, context or browser has been closed"
+    }
+  ],
+  "notes": [
+    "Long doors -> long -> pit: failed to reach (38,10) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal"
+  ],
+  "shots": [
+    "evidence/run-batch1c/movement_routes/route_1.png",
+    "evidence/run-batch1c/movement_routes/route_2.png",
+    "evidence/run-batch1c/movement_routes/route_3.png"
+  ],
+  "errors": []
+}

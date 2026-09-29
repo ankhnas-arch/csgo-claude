@@ -1,0 +1,23 @@
+[0s] geometry built: receiver=564, bolt=624, barrel=1374, handguard=476, fittings=220, stock=1228, butt_pad=108, stock_swivel=132, mag=424, trigger_guard=284, trigger=92, scope=2624
+  baked receiver: metal 1024x1024 basecolor+roughness in 37.5s
+  baked mag: metal 1024x1024 basecolor+roughness in 34.0s
+  baked stock: polymer 1024x1024 basecolor+roughness in 28.1s
+  baked handguard: polymer 1024x1024 basecolor+roughness in 14.9s
+[115s] bakes done in 114.5s
+world copy: 1500 tris
+arms tris: 4744
+[115s] tri counts: gun(viewmodel)=8150, arms=4744, world=1500, total=14394
+  per object: cuff_L=124, sleeve_L=220, fL_1_s2=136, fL_1_s1=116, fL_2_s2=136, fL_2_s1=116, fL_3_s2=136, fL_3_s1=116, fL_4_s2=136, fL_4_s1=116, knuckles_L=256, palm_L=412, thenar_L=100, thumb_L_s2=136, thumb_L_s1=116, cuff_R=124, sleeve_R=220, fR_1_s2=136, fR_1_s1=116, fR_2_s2=136, fR_2_s1=116, fR_3_s2=136, fR_3_s1=116, fR_4_s2=136, fR_4_s1=116, knuckles_R=256, palm_R=412, thenar_R=100, thumb_R_s2=136, thumb_R_s1=116, barrel=1374, bolt=624, butt_pad=108, handguard=476, fittings=220, mag=424, receiver=564, scope=2624, stock=1228, stock_swivel=132, trigger=92, trigger_guard=284, world=1500
+  materials: ['glass', 'glove', 'glove_pad', 'metal_blued', 'metal_blued_mag', 'metal_blued_receiver', 'metal_dark', 'polymer_green', 'polymer_green_handguard', 'polymer_green_stock', 'rubber', 'sleeve', 'steel_bright']; images: [('awp_handguard_basecolor.jpg', 1024), ('awp_handguard_roughness.jpg', 1024), ('awp_mag_basecolor.jpg', 1024), ('awp_mag_roughness.jpg', 1024), ('awp_receiver_basecolor.jpg', 1024), ('awp_receiver_roughness.jpg', 1024), ('awp_stock_basecolor.jpg', 1024), ('awp_stock_roughness.jpg', 1024)]
+  exported /home/user/csgo-claude/app/public/assets/weapons/awp.glb (2.31 MB)
+  wrote /home/user/csgo-claude/app/public/assets/weapons/awp.anim.json
+  saved /home/user/csgo-claude/app/assets-source/blender/awp.blend (0.92 MB)
+  render times: side 29.8s, front 24.1s, threequarter 42.2s, fp 20.0s, anim strips (workbench) 42.3s
+VERIFY GLB /home/user/csgo-claude/app/public/assets/weapons/awp.glb
+  animation 'Scene': 33 channels, time 0.000..11.000s = frames 0..330
+  nodes (71): cuff_L, sleeve_L, arm_L, fL_1_s2, fL_1_k2, fL_1_s1, fL_1, fL_2_s2, fL_2_k2, fL_2_s1, fL_2, fL_3_s2, fL_3_k2, fL_3_s1, fL_3, fL_4_s2, fL_4_k2, fL_4_s1, fL_4, knuckles_L, palm_L, thenar_L, thumb_L_s2, thumb_L_k2, thumb_L_s1, thumb_L, hand_L, cuff_R, sleeve_R, arm_R, fR_1_s2, fR_1_k2, fR_1_s1, fR_1, fR_2_s2, fR_2_k2, fR_2_s1, fR_2, fR_3_s2, fR_3_k2, fR_3_s1, fR_3, fR_4_s2, fR_4_k2, fR_4_s1, fR_4, knuckles_R, palm_R, thenar_R, thumb_R_s2, thumb_R_k2, thumb_R_s1, thumb_R, hand_R, arms, barrel, bolt, butt_pad, fittings, handguard, mag, eject, muzzle, receiver, scope, stock_swivel, stock, trigger, trigger_guard, world, weapon
+  materials: glove, sleeve, glove_pad, metal_blued, rubber, steel_bright, metal_dark, polymer_green_handguard, metal_blued_mag, metal_blued_receiver, glass, polymer_green_stock
+  triangles total 14394: cuff_L=124, sleeve_L=220, fL_1_s2=136, fL_1_s1=116, fL_2_s2=136, fL_2_s1=116, fL_3_s2=136, fL_3_s1=116, fL_4_s2=136, fL_4_s1=116, knuckles_L=256, palm_L=412, thenar_L=100, thumb_L_s2=136, thumb_L_s1=116, cuff_R=124, sleeve_R=220, fR_1_s2=136, fR_1_s1=116, fR_2_s2=136, fR_2_s1=116, fR_3_s2=136, fR_3_s1=116, fR_4_s2=136, fR_4_s1=116, knuckles_R=256, palm_R=412, thenar_R=100, thumb_R_s2=136, thumb_R_s1=116, barrel=1374, bolt=624, butt_pad=108, fittings=220, handguard=476, mag=424, receiver=564, scope=2624, stock_swivel=132, stock=1228, trigger=92, trigger_guard=284, world=1500
+  images: 8, size 2.31 MB
+  bpy re-import: 1 actions, names ['Scene'], frame range 0..330; objects 71
+[275s] done

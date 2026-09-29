@@ -1,0 +1,96 @@
+{
+  "name": "scope_melee",
+  "status": "FAIL",
+  "steps": [
+    {
+      "name": "first RMB: zoom level 1, FOV 40, overlay on, viewmodel hidden",
+      "ok": false,
+      "detail": "{\"current\":90,\"target\":90,\"cameraVFov\":73.73979529168803,\"viewmodelVisible\":true,\"scopeOverlay\":false}"
+    },
+    {
+      "name": "second RMB: zoom level 2, FOV 10",
+      "ok": false,
+      "detail": "{\"current\":40,\"target\":40,\"cameraVFov\":30.5369432627651,\"viewmodelVisible\":false,\"scopeOverlay\":true}"
+    },
+    {
+      "name": "third RMB: back to unscoped, FOV restored",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "scoped sensitivity scales down (zoom 1 ≈ 40/90)",
+      "ok": false,
+      "detail": "unscoped 0.025 scoped 0.103"
+    },
+    {
+      "name": "AWP shot hits scoped target and unscopes immediately",
+      "ok": false,
+      "detail": "damage undefined zoom after shot 1"
+    },
+    {
+      "name": "rechamber then automatic re-scope to previous level",
+      "ok": false,
+      "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"CT\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":37.99,\"y\":0.03,\"z\":30,\"yaw\":0,\"pitch\":-0.015,\"active\":\"awp\",\"action\":\"fire\",\"mag\":4,\"reserve\":10,\"zoom\":0,\"needsRechamber\":true,\"hasBomb\":false,\"kit\":false,\"grenades\":[],\"primary\":\"awp\",\"secondary\":\"usp\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+    },
+    {
+      "name": "rapid switch/fire respects AWP cycle (≤1 extra shot)",
+      "ok": true,
+      "detail": "0 awp shots in 1 s"
+    },
+    {
+      "name": "switch while scoped restores FOV and clears overlay",
+      "ok": true,
+      "detail": "{\"current\":90,\"target\":90,\"cameraVFov\":73.73979529168803,\"viewmodelVisible\":true,\"scopeOverlay\":false}"
+    },
+    {
+      "name": "drop while scoped restores FOV",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pause/resume while scoped keeps state coherent and fires nothing",
+      "ok": false,
+      "detail": "{\"zoom\":0,\"mag\":12}"
+    },
+    {
+      "name": "base FOV changed while scoped is restored correctly",
+      "ok": true,
+      "detail": "{\"current\":80,\"target\":80,\"cameraVFov\":64.3664437730972,\"viewmodelVisible\":true,\"scopeOverlay\":false}"
+    },
+    {
+      "name": "death while scoped clears overlay",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "knife swing at 6 m misses",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "knife slash at 1 m hits for ~40",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "knife stab (RMB) hits harder",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "notes": [],
+  "shots": [
+    "evidence/run-batch1c/scope_melee/awp_unscoped.png",
+    "evidence/run-batch1c/scope_melee/awp_zoom1.png",
+    "evidence/run-batch1c/scope_melee/awp_zoom2.png",
+    "evidence/run-batch1c/scope_melee/awp_rescoped.png",
+    "evidence/run-batch1c/scope_melee/awp_dead.png",
+    "evidence/run-batch1c/scope_melee/knife.png"
+  ],
+  "errors": []
+}

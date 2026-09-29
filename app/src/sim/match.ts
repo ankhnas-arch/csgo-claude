@@ -55,7 +55,7 @@ export class MatchSim {
     this.justSwitched = false;
     // give bomb to a random-ish T (first alive T by id order rotated by round for determinism)
     const ts = this.actorsOf('T');
-    if (ts.length) { const carrier = ts[(this.round - 1) % ts.length]; this.giveBomb(carrier); }
+    if (ts.length) { const carrier = ts[this.round % ts.length]; this.giveBomb(carrier); } // rotates carriers; round 1 goes to a bot so the human sees an escort first
     this.phaseTime = this.rules.freezeTime; this.buyWindowOpen = true;
     this.setPhase('freeze');
   }

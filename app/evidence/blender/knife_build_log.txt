@@ -1,0 +1,17 @@
+[0s] geometry built: blade=384, guard=108, handle=1044, pommel=108
+world copy: 380 tris
+arms tris: 4744
+[0s] tri counts: knife=1644, arms=4744, world=380, total=6768
+  per object: blade=384, guard=108, handle=1044, pommel=108, world=380
+  materials: ['glove', 'glove_pad', 'metal_dark', 'rubber', 'sleeve', 'steel_bright']
+  exported /home/user/csgo-claude/app/public/assets/weapons/knife.glb (0.21 MB)
+  wrote /home/user/csgo-claude/app/public/assets/weapons/knife.anim.json
+  saved /home/user/csgo-claude/app/assets-source/blender/knife.blend (0.18 MB)
+VERIFY GLB /home/user/csgo-claude/app/public/assets/weapons/knife.glb
+  animation 'Scene': 16 channels, time 0.000..6.667s = frames 0..200
+  nodes (63): cuff_L, sleeve_L, arm_L, fL_1_s2, fL_1_k2, fL_1_s1, fL_1, fL_2_s2, fL_2_k2, fL_2_s1, fL_2, fL_3_s2, fL_3_k2, fL_3_s1, fL_3, fL_4_s2, fL_4_k2, fL_4_s1, fL_4, knuckles_L, palm_L, thenar_L, thumb_L_s2, thumb_L_k2, thumb_L_s1, thumb_L, hand_L, cuff_R, sleeve_R, arm_R, fR_1_s2, fR_1_k2, fR_1_s1, fR_1, fR_2_s2, fR_2_k2, fR_2_s1, fR_2, fR_3_s2, fR_3_k2, fR_3_s1, fR_3, fR_4_s2, fR_4_k2, fR_4_s1, fR_4, knuckles_R, palm_R, thenar_R, thumb_R_s2, thumb_R_k2, thumb_R_s1, thumb_R, hand_R, arms, muzzle, blade, guard, handle, pommel, knife, world, weapon
+  materials: glove, sleeve, glove_pad, metal_dark, steel_bright, rubber
+  triangles total 6768: cuff_L=124, sleeve_L=220, fL_1_s2=136, fL_1_s1=116, fL_2_s2=136, fL_2_s1=116, fL_3_s2=136, fL_3_s1=116, fL_4_s2=136, fL_4_s1=116, knuckles_L=256, palm_L=412, thenar_L=100, thumb_L_s2=136, thumb_L_s1=116, cuff_R=124, sleeve_R=220, fR_1_s2=136, fR_1_s1=116, fR_2_s2=136, fR_2_s1=116, fR_3_s2=136, fR_3_s1=116, fR_4_s2=136, fR_4_s1=116, knuckles_R=256, palm_R=412, thenar_R=100, thumb_R_s2=136, thumb_R_s1=116, blade=384, guard=108, handle=1044, pommel=108, world=380
+  images: 0, size 0.21 MB
+  bpy re-import: 1 actions, names ['Scene'], frame range 0..200; objects 63
+[1s] done

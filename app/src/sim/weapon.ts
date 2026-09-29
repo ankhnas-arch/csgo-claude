@@ -14,6 +14,7 @@ export class WeaponInstance {
   zoomLevel = 0;        // AWP: 0,1,2
   needsRechamber = false;
   inaccuracy = 0;       // accumulated
+  stab = false;         // knife: last attack was a stab (RMB) -> presentation picks the 'fire2' clip
   shotsInBurst = 0;
   recoilIndex = 0;
   constructor(def: WeaponDef) {

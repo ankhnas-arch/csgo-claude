@@ -23,9 +23,18 @@ export class Ctx {
   /** Aim at absolute yaw/pitch (degrees; yaw 0 = north/-z). */
   async aimAt(yawDeg, pitchDeg = 0) { const p = (await this.state()).player; let dy = yawDeg - p.yaw * 180 / Math.PI; dy = ((dy + 540) % 360) - 180; const dp = pitchDeg - p.pitch * 180 / Math.PI; await this.turn(dy, dp); }
   async aimAtPoint(x, y, z) { const p = (await this.state()).player; const dx = x - p.x, dz = z - p.z; const eye = p.y + 1.63; const yaw = Math.atan2(-dx, -dz) * 180 / Math.PI; const pitch = Math.atan2(y - eye, Math.hypot(dx, dz)) * 180 / Math.PI; await this.aimAt(yaw, pitch); }
-  async press(key, ms = 160) { await this.page.keyboard.down(key); await sleep(ms); await this.page.keyboard.up(key); }
-  async hold(key, ms) { await this.page.keyboard.down(key); await sleep(ms); await this.page.keyboard.up(key); }
-  async click(ms = 80, button = 'left') { await this.page.mouse.down({ button }); await sleep(ms); await this.page.mouse.up({ button }); }
+  /** Wait `ms` of SIMULATION time when a live match is running (falls back to real time when paused/menu). */
+  async wait(ms) {
+    const s = await this.state().catch(() => null);
+    if (!s || s.app === 'menu' || s.app === 'matchEnd' || s.paused || s.buyOpen || !s.locked) { await sleep(ms); return; }
+    const t0 = s.time; const real0 = Date.now();
+    try { await this.page.waitForFunction(tt => { const st = window.__cs2.state(); return st.time >= tt || st.paused || st.app !== 'match'; }, t0 + ms / 1000, { timeout: Math.max(8000, ms * 12) }); }
+    catch { /* timed out: proceed */ }
+    this.simRatio = (ms / 1000) / Math.max(0.001, (Date.now() - real0) / 1000);
+  }
+  async press(key, ms = 160) { await this.page.keyboard.down(key); await this.wait(ms); await this.page.keyboard.up(key); }
+  async hold(key, ms) { await this.page.keyboard.down(key); await this.wait(ms); await this.page.keyboard.up(key); }
+  async click(ms = 80, button = 'left') { await this.page.mouse.down({ button }); await this.wait(ms); await this.page.mouse.up({ button }); }
   /** Walk to a point with WASD + mouse steering. Budgets are in SIM seconds (software GL runs slower than real time). */
   async walkTo(x, z, { timeout = 40000, simBudget = 30, tol = 1.2, run = true, jumpOnStuck = true } = {}) {
     const t0 = Date.now(); let last = null; let stuckEvents = 0; let ok = false;

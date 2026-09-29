@@ -1,0 +1,23 @@
+[0s] geometry built: receiver=1836, dust_cover=44, bolt=164, carrier=156, barrel=868, handguard=1336, mag=376, grip=428, trigger_guard=156, trigger=84, stock=296, butt_pad=108
+  baked receiver: metal 1024x1024 basecolor+roughness in 18.5s
+  baked mag: metal 1024x1024 basecolor+roughness in 22.5s
+  baked stock: polymer 1024x1024 basecolor+roughness in 27.2s
+  baked handguard: polymer 1024x1024 basecolor+roughness in 6.1s
+[75s] bakes done in 74.3s
+world copy: 1400 tris
+arms tris: 4744
+[75s] tri counts: gun(viewmodel)=5852, arms=4744, world=1400, total=11996
+  per object: cuff_L=124, sleeve_L=220, fL_1_s2=136, fL_1_s1=116, fL_2_s2=136, fL_2_s1=116, fL_3_s2=136, fL_3_s1=116, fL_4_s2=136, fL_4_s1=116, knuckles_L=256, palm_L=412, thenar_L=100, thumb_L_s2=136, thumb_L_s1=116, cuff_R=124, sleeve_R=220, fR_1_s2=136, fR_1_s1=116, fR_2_s2=136, fR_2_s1=116, fR_3_s2=136, fR_3_s1=116, fR_4_s2=136, fR_4_s1=116, knuckles_R=256, palm_R=412, thenar_R=100, thumb_R_s2=136, thumb_R_s1=116, barrel=868, bolt=164, carrier=156, butt_pad=108, grip=428, handguard=1336, mag=376, receiver=1836, dust_cover=44, stock=296, trigger=84, trigger_guard=156, world=1400
+  materials: ['glove', 'glove_pad', 'metal_blued', 'metal_blued_mag', 'metal_blued_receiver', 'metal_dark', 'polymer_black', 'polymer_black_handguard', 'polymer_black_stock', 'rubber', 'sleeve', 'steel_bright']; images: [('m4a4_handguard_basecolor.jpg', 1024), ('m4a4_handguard_roughness.jpg', 1024), ('m4a4_mag_basecolor.jpg', 1024), ('m4a4_mag_roughness.jpg', 1024), ('m4a4_receiver_basecolor.jpg', 1024), ('m4a4_receiver_roughness.jpg', 1024), ('m4a4_stock_basecolor.jpg', 1024), ('m4a4_stock_roughness.jpg', 1024)]
+  exported /home/user/csgo-claude/app/public/assets/weapons/m4a4.glb (2.55 MB)
+  wrote /home/user/csgo-claude/app/public/assets/weapons/m4a4.anim.json
+  saved /home/user/csgo-claude/app/assets-source/blender/m4a4.blend (1.08 MB)
+  render times: side 28.3s, front 24.1s, threequarter 66.3s, fp 37.0s, anim strips (workbench) 43.1s
+VERIFY GLB /home/user/csgo-claude/app/public/assets/weapons/m4a4.glb
+  animation 'Scene': 20 channels, time 0.000..9.667s = frames 0..290
+  nodes (71): cuff_L, sleeve_L, arm_L, fL_1_s2, fL_1_k2, fL_1_s1, fL_1, fL_2_s2, fL_2_k2, fL_2_s1, fL_2, fL_3_s2, fL_3_k2, fL_3_s1, fL_3, fL_4_s2, fL_4_k2, fL_4_s1, fL_4, knuckles_L, palm_L, thenar_L, thumb_L_s2, thumb_L_k2, thumb_L_s1, thumb_L, hand_L, cuff_R, sleeve_R, arm_R, fR_1_s2, fR_1_k2, fR_1_s1, fR_1, fR_2_s2, fR_2_k2, fR_2_s1, fR_2, fR_3_s2, fR_3_k2, fR_3_s1, fR_3, fR_4_s2, fR_4_k2, fR_4_s1, fR_4, knuckles_R, palm_R, thenar_R, thumb_R_s2, thumb_R_k2, thumb_R_s1, thumb_R, hand_R, arms, barrel, carrier, bolt, butt_pad, grip, handguard, mag, dust_cover, eject, muzzle, receiver, stock, trigger, trigger_guard, world, weapon
+  materials: glove, sleeve, glove_pad, metal_blued, steel_bright, rubber, metal_dark, polymer_black, polymer_black_handguard, metal_blued_mag, metal_blued_receiver, polymer_black_stock
+  triangles total 11996: cuff_L=124, sleeve_L=220, fL_1_s2=136, fL_1_s1=116, fL_2_s2=136, fL_2_s1=116, fL_3_s2=136, fL_3_s1=116, fL_4_s2=136, fL_4_s1=116, knuckles_L=256, palm_L=412, thenar_L=100, thumb_L_s2=136, thumb_L_s1=116, cuff_R=124, sleeve_R=220, fR_1_s2=136, fR_1_s1=116, fR_2_s2=136, fR_2_s1=116, fR_3_s2=136, fR_3_s1=116, fR_4_s2=136, fR_4_s1=116, knuckles_R=256, palm_R=412, thenar_R=100, thumb_R_s2=136, thumb_R_s1=116, barrel=868, carrier=156, bolt=164, butt_pad=108, grip=428, handguard=1336, mag=376, dust_cover=44, receiver=1836, stock=296, trigger=84, trigger_guard=156, world=1400
+  images: 8, size 2.55 MB
+  bpy re-import: 1 actions, names ['Scene'], frame range 0..290; objects 71
+[275s] done

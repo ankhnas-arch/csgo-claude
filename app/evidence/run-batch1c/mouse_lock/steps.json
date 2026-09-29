@@ -1,0 +1,58 @@
+{
+  "name": "mouse_lock",
+  "status": "PASS",
+  "steps": [
+    {
+      "name": "360° look returns to heading (delta wrapped)",
+      "ok": true,
+      "detail": "residual 5.2°"
+    },
+    {
+      "name": "pitch clamps and moves",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Escape pauses and releases lock",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "settings changed from pause menu",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Resume requires click and re-locks",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "closing menus did not fire a shot",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "blur clears held keys (no runaway movement)",
+      "ok": true,
+      "detail": "speed 0"
+    },
+    {
+      "name": "re-lock after blur via click",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "notes": [],
+  "shots": [
+    "evidence/run-batch1c/mouse_lock/paused.png",
+    "evidence/run-batch1c/mouse_lock/pause_settings.png",
+    "evidence/run-batch1c/mouse_lock/relocked.png"
+  ],
+  "errors": []
+}

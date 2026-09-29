@@ -17,7 +17,7 @@ export default async function (c) {
   await page.click('#pause [data-q="resume"]'); await sleep(500); const s2 = await c.state();
   c.step('Resume requires click and re-locks', s2.locked && !s2.paused);
   c.step('closing menus did not fire a shot', (await c.state()).player.mag === magBefore);
-  await page.keyboard.down('KeyW'); await sleep(400); await page.evaluate(() => window.dispatchEvent(new Event('blur'))); await sleep(500);
+  await page.keyboard.down('KeyW'); await c.wait(400); await page.evaluate(() => window.dispatchEvent(new Event('blur'))); await c.wait(500);
   const sp = (await c.state()).player.speed; c.step('blur clears held keys (no runaway movement)', sp < 0.5, `speed ${sp}`);
   await page.keyboard.up('KeyW');
   await c.ensureLocked(); c.step('re-lock after blur via click', (await c.state()).locked);

@@ -228,7 +228,7 @@ export class Game {
   }
   private knifeAttack(a: Actor, stab: boolean) {
     const w = a.active; if (w.def.category !== 'knife' || !w.canFire || this.time < w.nextFire) return;
-    w.nextFire = this.time + (stab ? 1.0 : 0.4); w.startAction('fire', stab ? 0.5 : 0.3); w.recoilIndex++;
+    w.nextFire = this.time + (stab ? 1.0 : 0.4); w.stab = stab; w.startAction('fire', stab ? 0.5 : 0.3); w.recoilIndex++;
     const d = a.aimDir(); const range = u2m(stab ? 48 : 64);
     const hit = traceShot(this.pw, a, this.actors, a.x, a.eyeY, a.z, d[0], d[1], d[2], range);
     if (hit.actor) {

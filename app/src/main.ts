@@ -69,7 +69,7 @@ export class App {
   setState(s: AppState) {
     this.state = s;
     this.menu.show(s === 'menu'); this.hud.show(s === 'match' || s === 'matchEnd');
-    if (s === 'menu') { this.input.enabled = false; this.input.releaseLock(); this.scene.setFreeCamera([26.5, 1.6, 44], [40, 1.9, 20], 62); this.scene.viewModel.pivot.visible = false; this.menuT = 0; if (!this.menuRig && this.menuGame) { this.menuRig = new CharacterRig('T', 0); this.menuRig.root.position.set(31, 0, 39); this.menuRig.root.rotation.y = Math.PI * 0.85; this.scene.scene.add(this.menuRig.root); } if (this.menuRig) this.menuRig.root.visible = true; }
+    if (s === 'menu') { this.input.enabled = false; this.input.releaseLock(); this.scene.setFreeCamera([29.0, 1.45, 46.5], [37.5, 1.6, 28], 58); this.scene.viewModel.pivot.visible = false; this.menuT = 0; if (!this.menuRig && this.menuGame) { this.menuRig = new CharacterRig('T', 0); this.menuRig.root.position.set(30.6, 0, 42.2); this.menuRig.root.rotation.y = Math.PI * 0.62; this.scene.scene.add(this.menuRig.root); } if (this.menuRig) this.menuRig.root.visible = true; }
     else { if (this.menuRig) this.menuRig.root.visible = false; }
   }
   startMatch(c: SetupChoice) {
@@ -98,7 +98,7 @@ export class App {
   onEscape() {
     if (this.state !== 'match') return;
     if (this.buyOpen) { this.closeBuy(); return; }
-    if (!this.paused && this.matchRes.el.classList.contains('hidden') && this.controlsCard.classList.contains('hidden')) { this.paused = true; if (this.game) this.game.paused = true; this.input.releaseLock(); this.input.clear(); this.pause.show(true); this.resumeEl.classList.add('hidden'); }
+    if (!this.paused && this.matchRes.el.classList.contains('hidden') && this.controlsCard.classList.contains('hidden')) { this.paused = true; if (this.game) this.game.paused = true; this.input.releaseLock(); this.input.clear(); this.pause.show(true); this.resumeEl.classList.add('hidden'); this.audio.suspend(); }
   }
   onKey(code: string) {
     if (this.state !== 'match' || !this.game) return;
@@ -152,7 +152,7 @@ export class App {
     this.perf.begin();
     if (this.state === 'menu') {
       this.menuT += frameDt;
-      if (this.menuGame && this.menuRig) { const cam = this.scene.freeCamera!; cam.pos.set(26.5 + Math.sin(this.menuT * 0.15) * 0.4, 1.6, 44 + Math.cos(this.menuT * 0.12) * 0.3); this.menuRig.phase += 0; this.scene.update(this.menuGame, 1, frameDt, 0, 0, { fov: 90, reducedMotion: true }, this.menuT); this.menuRig.root.visible = true; this.menuRig.hips.position.y = 0.96 + Math.sin(this.menuT * 1.4) * 0.006; this.menuRig.torso.rotation.x = 0.08 + Math.sin(this.menuT * 1.4) * 0.01; this.menuRig.armR.rotation.set(-0.9, -0.3, -0.25); this.menuRig.foreR.rotation.set(-0.9, 0, 0.1); this.menuRig.armL.rotation.set(-0.7, 0.6, 0.3); this.menuRig.foreL.rotation.set(-1.2, 0.2, -0.5); this.menuRig.head.rotation.y = Math.sin(this.menuT * 0.5) * 0.2; }
+      if (this.menuGame && this.menuRig) { const cam = this.scene.freeCamera!; cam.pos.set(29.0 + Math.sin(this.menuT * 0.15) * 0.25, 1.45 + Math.sin(this.menuT * 0.2) * 0.03, 46.5 + Math.cos(this.menuT * 0.12) * 0.2); this.menuRig.phase += 0; this.scene.update(this.menuGame, 1, frameDt, 0, 0, { fov: 90, reducedMotion: true }, this.menuT); this.menuRig.root.visible = true; this.menuRig.hips.position.y = 0.96 + Math.sin(this.menuT * 1.4) * 0.006; this.menuRig.torso.rotation.x = 0.08 + Math.sin(this.menuT * 1.4) * 0.01; this.menuRig.armR.rotation.set(-0.9, -0.3, -0.25); this.menuRig.foreR.rotation.set(-0.9, 0, 0.1); this.menuRig.armL.rotation.set(-0.7, 0.6, 0.3); this.menuRig.foreL.rotation.set(-1.2, 0.2, -0.5); this.menuRig.head.rotation.y = Math.sin(this.menuT * 0.5) * 0.2; }
       this.scene.render();
     } else if (this.game) {
       const g = this.game; const inp = this.input.locked && !this.paused && !this.buyOpen ? this.input.poll() : { ...EMPTY_INPUT };

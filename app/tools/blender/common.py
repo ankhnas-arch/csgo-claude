@@ -48,7 +48,7 @@ MATERIAL_SPECS = {
     'glove_pad':    ((0.045, 0.045, 0.048), 0.0, 0.80, 0.0),   # knuckle padding (slightly lighter, matte)
     'sleeve':       ((0.075, 0.085, 0.045), 0.0, 0.90, 0.0),   # olive-drab fabric cuff
     'glass':        ((0.02, 0.03, 0.05), 0.0, 0.10, 0.4),
-    'polymer_green': ((0.055, 0.095, 0.045), 0.0, 0.62, 0.0),  # AWP body
+    'polymer_green': ((0.038, 0.072, 0.030), 0.0, 0.62, 0.0),  # AWP body (dark green)
     'polymer_black': ((0.030, 0.031, 0.033), 0.0, 0.66, 0.0),  # USP frame
     'metal_dark':   ((0.045, 0.048, 0.055), 1.0, 0.40, 0.0),   # phosphate/oxide slide & scope
 }
@@ -267,7 +267,7 @@ def _surface_nodes(nt, kind, base_rgb, base_rough):
     L.new(tc.outputs['Object'], wear_noise.inputs['Vector'])
     wear_mul = N.new('ShaderNodeMath'); wear_mul.operation = 'MULTIPLY'
     L.new(ramp_e.outputs['Color'], wear_mul.inputs[0]); L.new(wear_noise.outputs['Fac'], wear_mul.inputs[1])
-    wear_gain = N.new('ShaderNodeMath'); wear_gain.operation = 'MULTIPLY'; wear_gain.inputs[1].default_value = 1.4 if kind == 'metal' else 0.9
+    wear_gain = N.new('ShaderNodeMath'); wear_gain.operation = 'MULTIPLY'; wear_gain.inputs[1].default_value = 1.4 if kind == 'metal' else (0.9 if kind == 'wood' else 0.55)
     L.new(wear_mul.outputs[0], wear_gain.inputs[0])
     wear_clamp = N.new('ShaderNodeClamp'); L.new(wear_gain.outputs[0], wear_clamp.inputs['Value'])
     # scratches: stretched high-frequency noise thresholded
@@ -291,8 +291,8 @@ def _surface_nodes(nt, kind, base_rgb, base_rough):
         L.new(mp.outputs['Vector'], grain.inputs['Vector'])
         gramp = N.new('ShaderNodeValToRGB'); cr = gramp.color_ramp
         cr.elements[0].position = 0.30; cr.elements[0].color = (0.060, 0.024, 0.010, 1)   # dark laminate line
-        cr.elements[1].position = 0.72; cr.elements[1].color = (0.205, 0.088, 0.036, 1)   # light grain
-        e2 = cr.elements.new(0.50); e2.color = (0.135, 0.052, 0.019, 1)                   # #6b4223 body tone
+        cr.elements[1].position = 0.72; cr.elements[1].color = (0.185, 0.092, 0.046, 1)   # light grain
+        e2 = cr.elements.new(0.50); e2.color = (0.125, 0.056, 0.026, 1)                   # #6b4223 body tone
         L.new(grain.outputs['Fac'], gramp.inputs['Fac'])
         # large-scale tone variation
         tone = N.new('ShaderNodeMixRGB'); tone.blend_type = 'MULTIPLY'; tone.inputs['Fac'].default_value = 0.5
@@ -570,7 +570,7 @@ def _studio(target=(0, 0.15, 0)):
     w.node_tree.nodes['Background'].inputs['Color'].default_value = (0.24, 0.24, 0.25, 1); w.node_tree.nodes['Background'].inputs['Strength'].default_value = 1.0
     floor = bpy.data.objects.new('_floor', bpy.data.meshes.new('_floor')); bm = bmesh.new()
     bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=4.0); bm.to_mesh(floor.data); bm.free()
-    fm = bpy.data.materials.new('_floor'); fm.use_nodes = True; fm.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (0.42, 0.42, 0.43, 1); fm.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = 0.9
+    fm = bpy.data.materials.new('_floor'); fm.use_nodes = True; fm.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (0.30, 0.30, 0.31, 1); fm.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = 0.9
     fm.diffuse_color = (0.42, 0.42, 0.43, 1); floor.data.materials.append(fm); floor.location = (0, 0.2, -0.45)
     sc.collection.objects.link(floor)
     def light(name, loc, energy, size, color=(1, 1, 1)):
