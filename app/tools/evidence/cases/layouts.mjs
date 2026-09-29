@@ -9,7 +9,7 @@ export default async function (c) {
     await c.shot(`hud_${w}x${h}`);
     await c.openBuy(); await c.shot(`buy_${w}x${h}`); await c.closeBuy();
     await c.ev(() => window.__cs2.setPhaseTime(0.3)); await c.waitPhase('live'); await c.ev(() => window.__cs2.setPhaseTime(600));
-    await c.ev(() => window.__cs2.giveWeapon('awp')); await sleep(1500); const en = (await c.ev(() => window.__cs2.actors())).find(a => a.team === 'T'); await c.ev(id => window.__cs2.teleport(38, 0, 180, id), en.id); await c.ev(() => window.__cs2.teleport(38, 30, 0)); await sleep(300); c.mx = w / 2; c.my = h / 2; await c.aimAtPoint(38, 1.2, 0);
+    await c.give('awp'); const en = (await c.ev(() => window.__cs2.actors())).find(a => a.team === 'T'); await c.ev(id => window.__cs2.teleport(38, 0, 180, id), en.id); await c.ev(() => window.__cs2.teleport(38, 30, 0)); await sleep(300); c.mx = w / 2; c.my = h / 2; await c.aimAtPoint(38, 1.2, 0);
     await c.click(60, 'right'); await sleep(400); await c.shot(`scope1_${w}x${h}`); await c.click(60, 'right'); await sleep(400); await c.shot(`scope2_${w}x${h}`);
     const circ = await page.evaluate(() => { const e = document.querySelector('#hud .scope svg circle'); const r = e.getBoundingClientRect(); return { w: r.width, h: r.height }; });
     c.step(`scope mask circle is round at ${w}x${h}`, Math.abs(circ.w - circ.h) < 2, circ);

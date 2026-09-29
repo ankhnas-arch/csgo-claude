@@ -7,7 +7,7 @@ export default async function (c) {
   // elimination win: player kills the last enemy by input (others via fixture)
   await c.ev(() => window.__cs2.freezeBots(true)); await c.ev(() => window.__cs2.setPhaseTime(0.3)); await c.waitPhase('live'); await c.ev(() => window.__cs2.setPhaseTime(600));
   await c.ev(() => window.__cs2.killAllEnemies(1)); const last = (await c.ev(() => window.__cs2.actors())).find(a => a.team === 'CT' && a.alive);
-  await c.ev(id => window.__cs2.teleport(38, 0, 180, id), last.id); await c.ev(() => window.__cs2.teleport(38, 6, 0)); await sleep(300); c.mx = 640; c.my = 360; await c.ev(() => window.__cs2.giveWeapon('ak47')); await sleep(1200); await c.aimAtPoint(38, 1.72, 0); await c.click(400); await sleep(500);
+  await c.ev(id => window.__cs2.teleport(38, 0, 180, id), last.id); await c.ev(() => window.__cs2.teleport(38, 6, 0)); await sleep(300); c.mx = 640; c.my = 360; await c.give('ak47'); await c.aimAtPoint(38, 1.72, 0); await c.click(400); await sleep(500);
   const e1 = await c.state(); c.step('elimination: last enemy killed by input → round end, T wins', e1.phase === 'roundEnd' && e1.score.T.score === 1, e1.score); await c.shot('round_won');
   await c.waitPhase('freeze', 20000); c.step('next round starts after result time', (await c.state()).round === 2);
   // timeout without plant: CT wins

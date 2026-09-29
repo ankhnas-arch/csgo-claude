@@ -125,14 +125,21 @@ export class MapBuilder {
       case 'lowwall': this.box(getMaterial(p.mat ?? 'plasterPale'), p.sx, p.sy, p.sz, p.x, y + p.sy / 2, p.z, rot, 1); this.box(getMaterial('stone'), p.sx + 0.1, 0.12, p.sz + 0.1, p.x, y + p.sy + 0.06, p.z, rot); break;
       case 'sandbag': { const m = solid('#8a7a55', 0.95); for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) { const g = new THREE.BoxGeometry(p.sx / 4 - 0.04, p.sy / 3 - 0.02, p.sz); (g as any).userData = {}; const mm = new THREE.Matrix4().makeRotationY(rot).setPosition(p.x + Math.cos(rot) * (-p.sx / 2 + p.sx / 8 + j * p.sx / 4 + (i % 2) * 0.12), y + p.sy / 6 + i * p.sy / 3, p.z - Math.sin(rot) * (-p.sx / 2 + p.sx / 8 + j * p.sx / 4 + (i % 2) * 0.12)); this.push(m, g, mm); } break; }
       case 'truck': {
-        const body = solid(p.color ?? '#5f8fb4', 0.55, 0.3), dark = solid('#1d1d1f', 0.6), glass = solid('#8fb0c8', 0.15, 0.6);
+        const body = solid(p.color ?? '#5f8fb4', 0.5, 0.35), dark = solid('#1d1d1f', 0.7), glass = solid('#a9c4d6', 0.15, 0.5), chrome = solid('#cfd3d8', 0.3, 0.9), rust = getMaterial('metalRust', { repeat: 1 });
         const c = Math.cos(rot), s = Math.sin(rot); const at = (lx: number, ly: number, lz: number) => [p.x + lx * c + lz * s, y + ly, p.z - lx * s + lz * c] as const;
-        let q = at(0, 0.55, -p.sz / 2 + 0.9); this.box(body, p.sx, 0.7, 1.8, q[0], q[1], q[2], rot); // cab base
-        q = at(0, 1.35, -p.sz / 2 + 1.0); this.box(body, p.sx - 0.2, 0.9, 1.4, q[0], q[1], q[2], rot); // cab
-        q = at(0, 1.45, -p.sz / 2 + 0.28); this.box(glass, p.sx - 0.5, 0.6, 0.06, q[0], q[1], q[2], rot); // windshield
-        q = at(0, 0.55, 0.9); this.box(body, p.sx, 0.5, p.sz - 1.9, q[0], q[1], q[2], rot); // bed
-        for (const sx of [-1, 1]) { q = at(sx * (p.sx / 2 - 0.05), 0.85, 0.9); this.box(body, 0.08, 0.5, p.sz - 1.9, q[0], q[1], q[2], rot); }
-        for (const [lx, lz] of [[-0.9, -1.5], [0.9, -1.5], [-0.9, 1.4], [0.9, 1.4]]) { q = at(lx, 0.38, lz); const g = new THREE.CylinderGeometry(0.38, 0.38, 0.3, 14); const mm = new THREE.Matrix4().makeRotationY(rot).multiply(new THREE.Matrix4().makeRotationZ(Math.PI / 2)).setPosition(q[0], q[1], q[2]); this.push(dark, g, mm); }
+        const W = p.sx, L = p.sz; let q;
+        q = at(0, 0.62, -L / 2 + 1.05); this.box(body, W, 0.75, 2.1, q[0], q[1], q[2], rot);          // hood/front
+        q = at(0, 1.02, -L / 2 + 0.55); this.box(body, W - 0.1, 0.05, 1.1, q[0], q[1], q[2], rot);     // hood top ridge
+        q = at(0, 1.38, -L / 2 + 1.75); this.box(body, W - 0.16, 0.95, 1.5, q[0], q[1], q[2], rot);   // cab
+        q = at(0, 1.55, -L / 2 + 1.0); this.box(glass, W - 0.5, 0.55, 0.06, q[0], q[1], q[2], rot);    // windshield
+        for (const sx of [-1, 1]) { q = at(sx * (W / 2 - 0.05), 1.55, -L / 2 + 1.75); this.box(glass, 0.04, 0.5, 0.9, q[0], q[1], q[2], rot); }
+        q = at(0, 0.55, -L / 2 + 0.05); this.box(chrome, W - 0.3, 0.16, 0.12, q[0], q[1], q[2], rot);  // bumper
+        q = at(0, 0.8, -L / 2 + 0.02); this.box(dark, W * 0.5, 0.3, 0.06, q[0], q[1], q[2], rot);      // grille
+        for (const sx of [-1, 1]) { q = at(sx * (W / 2 - 0.3), 0.85, -L / 2 + 0.0); const g = new THREE.CylinderGeometry(0.11, 0.11, 0.06, 12); this.push(chrome, g, new THREE.Matrix4().makeRotationY(rot).multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2)).setPosition(q[0], q[1], q[2])); }
+        q = at(0, 0.62, 0.95); this.box(rust, W, 0.5, L - 2.6, q[0], q[1], q[2], rot);                  // bed floor/body
+        for (const sx of [-1, 1]) { q = at(sx * (W / 2 - 0.05), 0.98, 0.95); this.box(body, 0.08, 0.45, L - 2.6, q[0], q[1], q[2], rot); }
+        q = at(0, 0.98, L / 2 - 0.05); this.box(body, W, 0.45, 0.08, q[0], q[1], q[2], rot);           // tailgate
+        for (const [lx, lz] of [[-0.95, -1.55], [0.95, -1.55], [-0.95, 1.5], [0.95, 1.5]]) { q = at(lx, 0.4, lz); const g = new THREE.CylinderGeometry(0.4, 0.4, 0.28, 16); const mm = new THREE.Matrix4().makeRotationY(rot).multiply(new THREE.Matrix4().makeRotationZ(Math.PI / 2)).setPosition(q[0], q[1], q[2]); this.push(dark, g, mm); const hub = new THREE.CylinderGeometry(0.16, 0.16, 0.3, 10); this.push(chrome, hub, mm.clone()); }
         break; }
       case 'doorleaf': {
         const wood = getMaterial('woodOld', { repeat: 1 }); this.box(wood, p.sx, p.sy, p.sz, p.x, y + p.sy / 2, p.z, rot, 1);

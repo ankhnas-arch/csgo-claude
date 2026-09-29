@@ -17,7 +17,7 @@ import { traceShot, computeDamage } from './combat';
 import type { PlayerInput, SimEvents } from './types';
 
 export interface ActorInput { wishX: number; wishZ: number; jump: boolean; crouch: boolean; walk: boolean; fire: boolean; firePressed: boolean; altPressed: boolean; reload: boolean; inspect: boolean; interact: boolean; drop: boolean; switchTo: WeaponInstance | null; throwStrength?: number }
-export interface WorldItem { id: number; kind: 'weapon' | 'bomb'; weapon: WeaponInstance | null; x: number; y: number; z: number; yaw: number; }
+export interface WorldItem { id: number; kind: 'weapon' | 'bomb'; weapon: WeaponInstance | null; x: number; y: number; z: number; yaw: number; noPickupUntil?: number; dropperId?: number; }
 export interface GameOptions { playerTeam: Team; difficulty: BotDifficulty; seed: number; rules?: MatchRules; economy?: EconomyDef; playerName?: string; }
 export interface NoiseEvent { x: number; y: number; z: number; team: Team; time: number; loud: boolean; actorId: number; }
 
@@ -258,21 +258,24 @@ export class Game {
     const d = a.forward();
     if (w.def.slot === 'bomb') { this.match.dropBomb(a, a.x + d[0] * 0.8, a.y + 0.05, a.z + d[2] * 0.8); this.spawnItem(null, a.x + d[0] * 0.8, a.y, a.z + d[2] * 0.8, 'bomb'); return; }
     a.removeWeapon(w); w.interrupt(); w.zoomLevel = 0; a.rezoomLevel = 0;
-    this.spawnItem(w, a.x + d[0] * 0.8, a.y, a.z + d[2] * 0.8);
+    const it = this.spawnItem(w, a.x + d[0] * 1.6, a.y, a.z + d[2] * 1.6); it.noPickupUntil = this.time + 1.0; it.dropperId = a.id;
     this.events.emit('itemDrop', { actorId: a.id, weapon: w.def.id, pos: [a.x, a.y, a.z] });
     this.events.emit('weaponSwitch', { actorId: a.id, weapon: a.active.def.id });
     this.events.emit('scope', { actorId: a.id, level: 0 });
   }
-  spawnItem(w: WeaponInstance | null, x: number, y: number, z: number, kind: 'weapon' | 'bomb' = 'weapon') {
+  spawnItem(w: WeaponInstance | null, x: number, y: number, z: number, kind: 'weapon' | 'bomb' = 'weapon'): WorldItem {
+    // keep the drop inside the playable area: if the throw point is in a wall, fall back to the origin
     const f = this.pw.raycast(x, y + 1.0, z, 0, -1, 0, 6, t => t?.kind === 'actor' || t?.kind === 'grenade');
     const gy = f ? f.point[1] : y;
-    this.items.push({ id: this.nextItemId++, kind, weapon: w, x, y: gy, z, yaw: this.rng.next() * Math.PI * 2 });
+    const it: WorldItem = { id: this.nextItemId++, kind, weapon: w, x, y: gy, z, yaw: this.rng.next() * Math.PI * 2 };
+    this.items.push(it); return it;
   }
   private updateItems() {
     for (let i = this.items.length - 1; i >= 0; i--) {
       const it = this.items[i];
       for (const a of this.actors) {
         if (!a.alive) continue;
+        if (it.noPickupUntil !== undefined && it.dropperId === a.id && this.time < it.noPickupUntil) continue;
         const d = Math.hypot(a.x - it.x, a.z - it.z); if (d > 1.0 || Math.abs(a.y - it.y) > 1.2) continue;
         if (it.kind === 'bomb') { if (a.team === 'T' && !a.inv.bomb) { this.match.giveBomb(a); this.items.splice(i, 1); break; } continue; }
         const w = it.weapon!; const slot = w.def.slot;

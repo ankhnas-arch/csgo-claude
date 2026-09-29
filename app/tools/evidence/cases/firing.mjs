@@ -4,7 +4,7 @@ export default async function (c) {
   const page = await c.open('http://127.0.0.1:4173/?quality=low&scale=0.5');
   await startMatchUI(page, { team: 'T', seed: 41 }); await c.ensureLocked();
   await c.ev(() => window.__cs2.freezeBots(true)); await c.ev(() => window.__cs2.setPhaseTime(0.3)); await c.waitPhase('live'); await c.ev(() => window.__cs2.setPhaseTime(600));
-  await c.ev(() => window.__cs2.giveWeapon('ak47')); await sleep(1200);
+  await c.give('ak47');
   await c.ev(() => window.__cs2.teleport(38, 20, 90)); await sleep(300); c.mx = 640; c.my = 360; await c.aimAt(90, 0); await sleep(200);
   await c.events();
   await c.click(1200); await sleep(300); const shots = await c.events('shot');

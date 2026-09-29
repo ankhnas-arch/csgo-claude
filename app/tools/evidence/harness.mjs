@@ -49,5 +49,8 @@ export class Ctx {
   async closeBuy() { await this.press('KeyB'); await sleep(500); await this.ensureLocked(); }
   async buyItem(id) { const before = (await this.state()).player.money; const btn = this.page.locator(`#buy .item[data-item="${id}"]`); if (!(await btn.count())) return { ok: false, reason: 'not listed' }; await btn.click(); await sleep(150); const status = await this.page.locator('#buy [data-q="status"]').textContent(); const after = (await this.state()).player.money; return { ok: after < before, status, cost: before - after }; }
   perf() { return this.page.evaluate(() => window.__cs2.perf()); }
+  /** Wait until the active weapon finished its draw/reload/etc. (sim-time dependent; software GL runs slower than real time). */
+  async awaitIdle(timeout = 15000) { await this.page.waitForFunction(() => { const p = window.__cs2.state().player; return p && (!p.alive || p.action === 'idle' || p.action === 'inspect'); }, null, { timeout }).catch(() => {}); }
+  async give(id) { await this.ev(k => window.__cs2.giveWeapon(k), id); await this.awaitIdle(); }
 }
 export function summarize(results) { return results.map(r => `| ${r.name} | ${r.status} | ${r.steps.filter(s => s.ok).length}/${r.steps.length} steps | ${r.notes.join('; ')} |`).join('\n'); }

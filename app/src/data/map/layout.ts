@@ -104,6 +104,10 @@ export const PROPS: Prop[] = [
   { kind: 'box', x: 40, y: 4.2, z: -44, sx: 1.5, sy: 1.5, sz: 1.5, mat: 'crate', collide: true },
   { kind: 'box', x: 25, y: 2, z: -44, sx: 2.2, sy: 1.6, sz: 1.6, mat: 'crate', collide: true, label: 'Goose' },
   { kind: 'sandbag', x: 30, y: 2, z: -31, sx: 3.0, sy: 1.0, sz: 0.9, rotY: 0.2, collide: true },
+  { kind: 'barrel', x: 23, y: 2, z: -33, sx: 0.8, sy: 1.1, sz: 0.8, mat: 'metalOlive', collide: true },
+  { kind: 'box', x: 28, y: 2, z: -45, sx: 1.2, sy: 0.8, sz: 1.2, mat: 'tarpOlive', collide: true },
+  { kind: 'cable', x: 32, y: 5.6, z: -38, sx: 20, sy: 0.05, sz: 0.05 },
+  { kind: 'lamp', x: 42.6, y: 4.0, z: -40, sx: 0.4, sy: 0.6, sz: 0.4 },
   { kind: 'barrel', x: 41.5, y: 2, z: -32, sx: 0.8, sy: 1.1, sz: 0.8, mat: 'metalRust', collide: true },
   // Short
   { kind: 'box', x: 18, y: 2, z: -22, sx: 1.4, sy: 1.2, sz: 1.4, mat: 'crate', collide: true },
@@ -114,6 +118,12 @@ export const PROPS: Prop[] = [
   { kind: 'shutter', x: 42.9, y: 0, z: 22, sx: 0.2, sy: 2.6, sz: 2.4, color: '#3e6f6a' },
   { kind: 'shutter', x: 42.9, y: 0, z: 12, sx: 0.2, sy: 2.6, sz: 2.4, color: '#8c4e3a' },
   { kind: 'sign', x: 42.8, y: 3.6, z: 12, sx: 0.1, sy: 0.8, sz: 3.0, label: 'BAKERY · فرن' },
+  { kind: 'sign', x: 42.8, y: 3.7, z: 22, sx: 0.1, sy: 0.8, sz: 3.0, label: 'DUST MOTORS' },
+  { kind: 'awning', x: 33.6, y: 3.0, z: -2, sx: 1.4, sy: 0.3, sz: 4, mat: 'canvasRed' },
+  { kind: 'shutter', x: 33.1, y: 0, z: -2, sx: 0.2, sy: 2.6, sz: 2.4, color: '#2f5a8a' },
+  { kind: 'sign', x: 33.2, y: 3.5, z: -2, sx: 0.1, sy: 0.7, sz: 2.6, label: 'TEA · شاي' },
+  { kind: 'cable', x: 38, y: 5.4, z: 34, sx: 10, sy: 0.05, sz: 0.05 },
+  { kind: 'dish', x: 42.6, y: 5.8, z: 30, sx: 1.0, sy: 1.0, sz: 0.4 },
   { kind: 'cable', x: 38, y: 5.2, z: 18, sx: 10, sy: 0.05, sz: 0.05 },
   { kind: 'cable', x: 38, y: 5.5, z: 4, sx: 10, sy: 0.05, sz: 0.05 },
   { kind: 'barrel', x: 33.8, y: 0, z: 8, sx: 0.8, sy: 1.1, sz: 0.8, mat: 'metalRust', collide: true },
@@ -122,6 +132,8 @@ export const PROPS: Prop[] = [
   { kind: 'curb', x: 33.2, y: 0, z: 20, sx: 0.4, sy: 0.18, sz: 20 },
   // Outside long
   { kind: 'box', x: 24, y: 0, z: 46, sx: 1.8, sy: 1.4, sz: 1.8, mat: 'crate', collide: true },
+  { kind: 'barrel', x: 19, y: 0, z: 37, sx: 0.8, sy: 1.1, sz: 0.8, mat: 'metalGreen', collide: true },
+  { kind: 'sign', x: 27.9, y: 4.4, z: 42, sx: 0.1, sy: 0.7, sz: 2.4, label: 'LONG DOORS' },
   { kind: 'window', x: 18.1, y: 2.4, z: 40, sx: 0.1, sy: 1.4, sz: 1.2 },
   // Pit
   { kind: 'box', x: 49, y: -1.6, z: -8, sx: 1.6, sy: 1.2, sz: 1.6, mat: 'crate', collide: true },
@@ -129,6 +141,8 @@ export const PROPS: Prop[] = [
   { kind: 'box', x: -9, y: 2, z: 50, sx: 1.8, sy: 1.4, sz: 1.8, mat: 'crate', collide: true },
   { kind: 'barrel', x: 10, y: 2, z: 51, sx: 0.8, sy: 1.1, sz: 0.8, mat: 'metalRust', collide: true },
   { kind: 'palm', x: 10, y: 2, z: 40, sx: 1, sy: 6, sz: 1 },
+  { kind: 'cable', x: 0, y: 6.4, z: 45, sx: 22, sy: 0.05, sz: 0.05 },
+  { kind: 'truck', x: -7, y: 2, z: 41, sx: 2.2, sy: 2.0, sz: 5.0, rotY: 1.2, color: '#b8b0a0', collide: true },
   // Outside tunnels
   { kind: 'box', x: -28, y: 0, z: 45, sx: 2.2, sy: 1.6, sz: 2.2, mat: 'crate', collide: true },
   { kind: 'lamp', x: -31.6, y: 3.4, z: 34, sx: 0.4, sy: 0.6, sz: 0.4 },

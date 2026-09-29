@@ -4,7 +4,7 @@ export default async function (c) {
   const page = await c.open('http://127.0.0.1:4173/?quality=low&scale=0.5');
   await startMatchUI(page, { team: 'T', seed: 51 }); await c.ensureLocked();
   await c.ev(() => window.__cs2.freezeBots(true)); await c.ev(() => window.__cs2.setPhaseTime(0.3)); await c.waitPhase('live'); await c.ev(() => window.__cs2.setPhaseTime(600));
-  await c.ev(() => window.__cs2.giveWeapon('ak47')); await sleep(1200); await c.ev(() => window.__cs2.teleport(38, 20, 90)); await sleep(200); c.mx = 640; c.my = 360; await c.aimAt(90, 0);
+  await c.give('ak47'); await c.ev(() => window.__cs2.teleport(38, 20, 90)); await sleep(200); c.mx = 640; c.my = 360; await c.aimAt(90, 0);
   await c.click(3600); await sleep(300); let p = (await c.state()).player; c.step('magazine empties to 0 by firing', p.mag === 0 && p.reserve === 90, p);
   await c.click(200); await sleep(200); p = (await c.state()).player; c.step('dry fire does nothing / no negative ammo', p.mag === 0 && p.reserve === 90);
   await c.events(); await c.press('KeyR'); await sleep(400); p = (await c.state()).player; c.step('R starts reload', p.action === 'reload'); await c.shot('reload_mid');

@@ -6,7 +6,7 @@ async function setup(c, team, seed) {
   await c.ev(() => window.__cs2.freezeBots(true)); await c.ev(() => window.__cs2.setPhaseTime(0.3)); await c.waitPhase('live'); await c.ev(() => window.__cs2.setPhaseTime(600));
   return page;
 }
-async function throwAt(c, kind, x, y, z, pitchBias = 8) { await c.ev(k => window.__cs2.giveWeapon(k), kind); await sleep(800); await c.aimAtPoint(x, y, z); await c.turn(0, pitchBias); await sleep(150); await c.events(); await c.click(60); }
+async function throwAt(c, kind, x, y, z, pitchBias = 8) { await c.give(kind); await c.aimAtPoint(x, y, z); await c.turn(0, pitchBias); await sleep(150); await c.events(); await c.click(60); }
 export default async function (c) {
   await setup(c, 'T', 71);
   const enemies = (await c.ev(() => window.__cs2.actors())).filter(a => a.team === 'CT');

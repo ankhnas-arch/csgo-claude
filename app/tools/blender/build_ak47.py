@@ -241,7 +241,7 @@ key(bolt, 90, loc=BOLT_ORIGIN); key(bolt, 93, loc=BOLT_ORIGIN + Vector((0, -0.06
 key(trigger, 90, rot=(0, 0, 0)); key(trigger, 92, rot=(-14, 0, 0)); key(trigger, 98, rot=(0, 0, 0))
 key_left(90, L_REST_M, L_REST_CURL); key_left(101, L_REST_M, L_REST_CURL)
 # reload 102-180
-key_weapon(102); key_weapon(112, (-0.025, -0.03, 0.055), (10, 28, 8)); key_weapon(150, (-0.025, -0.03, 0.055), (10, 28, 8)); key_weapon(158, (-0.015, -0.02, 0.035), (6, 8, 4)); key_weapon(168, (-0.015, -0.02, 0.035), (6, 8, 4)); key_weapon(179)
+key_weapon(102); key_weapon(112, (-0.03, -0.02, 0.10), (14, 30, 8)); key_weapon(150, (-0.03, -0.02, 0.10), (14, 30, 8)); key_weapon(158, (-0.02, -0.02, 0.06), (8, 10, 4)); key_weapon(168, (-0.02, -0.02, 0.06), (8, 10, 4)); key_weapon(179)
 key_left(102, L_REST_M, L_REST_CURL); key_left(107, L_REST_M @ Matrix.Translation((0.03, -0.06, -0.03)), OPEN_CURL)
 Mm = key_mag(102); key_mag(111); key_left(111, Mm @ H_REL, MAG_CURL)                     # grab the mag
 Mm = key_mag(120, (0, 0.004, -0.010), 26); key_left(120, Mm @ H_REL, MAG_CURL)              # rocked forward, unlatched (event reload_mag_out)
@@ -286,6 +286,7 @@ log(f'  materials: {[m.name for m in bpy.data.materials]}; images: {[(i.name, i.
 glb = PUBLIC_WEAPONS / f'{WID}.glb'; export_glb(glb)
 write_anim_json(PUBLIC_WEAPONS / f'{WID}.anim.json', CLIPS, EVENTS)
 blend = ASSETS_SRC / f'{WID}.blend'
+bpy.context.preferences.filepaths.save_version = 0
 bpy.ops.file.pack_all(); bpy.ops.wm.save_as_mainfile(filepath=str(blend), compress=True); log(f'  saved {blend} ({os.path.getsize(blend) / 1e6:.2f} MB)')
 
 # ------------------------------------------------------------------------------------------------- review renders + verification

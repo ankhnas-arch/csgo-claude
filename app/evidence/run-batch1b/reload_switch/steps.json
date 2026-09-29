@@ -1,0 +1,42 @@
+{
+  "name": "reload_switch",
+  "status": "FAIL",
+  "steps": [
+    {
+      "name": "magazine empties to 0 by firing",
+      "ok": false,
+      "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"ak47\",\"action\":\"idle\",\"mag\":26,\"reserve\":90,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+    },
+    {
+      "name": "dry fire does nothing / no negative ammo",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "R starts reload",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "switch interrupts reload (knife active)",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "interrupted reload granted no ammo",
+      "ok": false,
+      "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"knife\",\"action\":\"draw\",\"mag\":0,\"reserve\":0,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+    },
+    {
+      "name": "case threw",
+      "ok": false,
+      "detail": "page.waitForFunction: Timeout 8000ms exceeded."
+    }
+  ],
+  "notes": [],
+  "shots": [
+    "evidence/run-batch1b/reload_switch/reload_mid.png",
+    "evidence/run-batch1b/reload_switch/error.png"
+  ],
+  "errors": []
+}

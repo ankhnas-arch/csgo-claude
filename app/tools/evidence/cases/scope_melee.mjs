@@ -4,7 +4,7 @@ export default async function (c) {
   const page = await c.open('http://127.0.0.1:4173/?quality=low&scale=0.5');
   await startMatchUI(page, { team: 'CT', seed: 61 }); await c.ensureLocked();
   await c.ev(() => window.__cs2.freezeBots(true)); await c.ev(() => window.__cs2.setPhaseTime(0.3)); await c.waitPhase('live'); await c.ev(() => window.__cs2.setPhaseTime(600));
-  await c.ev(() => window.__cs2.giveWeapon('awp')); await sleep(1500);
+  await c.give('awp');
   const enemy = (await c.ev(() => window.__cs2.actors())).find(a => a.team === 'T');
   await c.ev(id => window.__cs2.teleport(38, 0, 180, id), enemy.id); await c.ev(() => window.__cs2.teleport(38, 30, 0)); await sleep(300); c.mx = 640; c.my = 360; await c.aimAtPoint(38, 1.2, 0); await sleep(300);
   const f0 = await c.ev(() => window.__cs2.fov()); await c.shot('awp_unscoped');
