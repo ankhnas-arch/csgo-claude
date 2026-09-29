@@ -1,6 +1,6 @@
 import { RECTS, PROPS, MAP_BOUNDS, floorYAt, rectFloorY, type Rect, type Prop, type MatKey } from './layout';
 
-export interface WallSeg { x0: number; z0: number; x1: number; z1: number; yBase: number; yTop: number; mat: MatKey; rectId: string; outward: [number, number]; }
+export interface WallSeg { x0: number; z0: number; x1: number; z1: number; yBase: number; yTop: number; mat: MatKey; rectId: string; outward: [number, number]; ledge?: boolean; }
 export interface FloorPiece { rect: Rect; cx: number; cz: number; w: number; d: number; y: number; ramp?: { axis: 'x' | 'z'; yStart: number; yEnd: number } }
 export interface CeilingPiece { rect: Rect; y: number }
 export interface NavGrid {
@@ -43,15 +43,21 @@ export function compileMap(): CompiledMap {
     for (const e of edges) {
       const len = Math.hypot(e.bx - e.ax, e.bz - e.az);
       const n = Math.max(1, Math.round(len / 0.25));
-      let runStart = -1;
+      let runStart = -1; let runKind: 'wall' | 'ledge' = 'wall'; let runOtherY = 0;
       const flush = (iEnd: number) => {
         if (runStart < 0) return;
         const t0 = runStart / n, t1 = iEnd / n;
         const x0 = e.ax + (e.bx - e.ax) * t0, z0 = e.az + (e.bz - e.az) * t0;
         const x1 = e.ax + (e.bx - e.ax) * t1, z1 = e.az + (e.bz - e.az) * t1;
         const ya = rectFloorY(r, x0, z0), yb = rectFloorY(r, x1, z1);
-        const lo = Math.min(ya, yb) - 1.0, hi = Math.max(ya, yb) + wallH;
-        walls.push({ x0, z0, x1, z1, yBase: lo, yTop: hi, mat: r.wall ?? 'plasterWarm', rectId: r.id, outward: [e.nx, e.nz] });
+        if (runKind === 'ledge') {
+          // this rect is HIGHER than its neighbour: emit a retaining wall from the neighbour floor up to this floor (only from the higher side)
+          const hiY = Math.max(ya, yb);
+          if (hiY > runOtherY) walls.push({ x0, z0, x1, z1, yBase: runOtherY - 0.5, yTop: hiY, mat: 'stone', rectId: r.id, outward: [e.nx, e.nz], ledge: true });
+        } else {
+          const lo = Math.min(ya, yb) - 1.0, hi = Math.max(ya, yb) + wallH;
+          walls.push({ x0, z0, x1, z1, yBase: lo, yTop: hi, mat: r.wall ?? 'plasterWarm', rectId: r.id, outward: [e.nx, e.nz] });
+        }
         runStart = -1;
       };
       for (let i = 0; i <= n; i++) {
@@ -60,7 +66,9 @@ export function compileMap(): CompiledMap {
         const inside = rectFloorY(r, px, pz);
         const q = floorYAt(px + e.nx * 0.08, pz + e.nz * 0.08);
         const open = i < n && q !== null && q.rect !== r && Math.abs(q.y - inside) <= OPEN_STEP;
-        if (!open && i < n) { if (runStart < 0) runStart = i; }
+        const ledge = !open && i < n && q !== null && q.rect !== r && Math.abs(q.y - inside) <= 2.2; // walkable-height drop: platform edge
+        const kind: 'wall' | 'ledge' = ledge ? 'ledge' : 'wall';
+        if (!open && i < n) { if (runStart < 0) { runStart = i; runKind = kind; runOtherY = q ? Math.min(q.y, inside) : inside; } else if (kind !== runKind) { flush(i); runStart = i; runKind = kind; runOtherY = q ? Math.min(q.y, inside) : inside; } }
         else flush(i);
       }
     }

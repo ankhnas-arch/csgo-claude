@@ -44,7 +44,7 @@ function grayCanvas(v: Float32Array, size: number): HTMLCanvasElement {
 function clamp01(x: number) { return Math.max(0, Math.min(1, x)); }
 function mix(a: number[], b: number[], t: number) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
 
-export interface TexSpec { kind: 'plaster' | 'stone' | 'wood' | 'metal' | 'sand' | 'crate' | 'asphalt' | 'canvas' | 'tarp' | 'ribbed' | 'timber' | 'concrete'; base: number[]; seed: number; repeat: number; tint2?: number[]; }
+export interface TexSpec { kind: 'plaster' | 'stone' | 'flagstone' | 'wood' | 'metal' | 'sand' | 'crate' | 'asphalt' | 'canvas' | 'tarp' | 'ribbed' | 'timber' | 'concrete'; base: number[]; seed: number; repeat: number; tint2?: number[]; }
 const cache = new Map<string, TexSet>();
 export function getTexSet(spec: TexSpec, size = 512): TexSet {
   const key = JSON.stringify(spec); const hit = cache.get(key); if (hit) return hit;
@@ -64,13 +64,17 @@ export function getTexSet(spec: TexSpec, size = 512): TexSet {
         // chipped areas near bottom rows (edge wear) handled via v coordinate: darker lower band
         const wear = clamp01((0.85 - y / s) * -2) * 0.3; col = col.map(v => v * (1 - wear * 0.5));
         h = a * 0.5 + b * 0.3 + c * 0.2 + patches * 0.25; r = 0.85 + (b - 0.5) * 0.2; break; }
-      case 'stone': {
-        const cw = s / 6, ch = s / 10; const row = Math.floor(y / ch); const xo = (row % 2) * cw * 0.5; const cx = ((x + xo) % cw) / cw, cy = (y % ch) / ch;
-        const mortar = (cx < 0.05 || cx > 0.95 || cy < 0.07 || cy > 0.93) ? 1 : 0;
-        const stoneVar = valueNoise1(rng, Math.floor((x + xo) / cw) + row * 31);
-        col = mix(base, tint2, stoneVar * 0.5 + (b - 0.5) * 0.3); col = col.map(v => clamp01(v + (c - 0.5) * 0.1));
-        if (mortar) col = col.map(v => v * 0.55);
-        h = mortar ? 0.2 : 0.6 + (b - 0.5) * 0.4 + c * 0.15; r = mortar ? 0.95 : 0.75 + (b - 0.5) * 0.2; break; }
+      case 'stone': case 'flagstone': {
+        const flag = spec.kind === 'flagstone';
+        const cw = flag ? s / 3 : s / 4, ch = flag ? s / 3 : s / 7; const row = Math.floor(y / ch); const xo = (row % 2) * cw * 0.5 + valueNoise1(rng, row * 7) * cw * 0.3;
+        const colI = Math.floor((x + xo) / cw); const jag = (valueNoise1(rng, colI * 13 + row * 3) - 0.5) * 0.08;
+        const cx = ((x + xo) % cw) / cw + jag, cy = (y % ch) / ch;
+        const edge = flag ? 0.035 : 0.05;
+        const mortar = (cx < edge || cx > 1 - edge || cy < edge * 1.3 || cy > 1 - edge * 1.3) ? 1 : 0;
+        const stoneVar = valueNoise1(rng, colI + row * 31);
+        col = mix(base, tint2, stoneVar * 0.45 + (b - 0.5) * 0.25); col = col.map(v => clamp01(v + (c - 0.5) * 0.08 + (a - 0.5) * 0.1));
+        if (mortar) col = col.map(v => v * (flag ? 0.82 : 0.72));
+        h = mortar ? 0.3 : 0.6 + (b - 0.5) * 0.3 + c * 0.1; r = mortar ? 0.95 : 0.8 + (b - 0.5) * 0.15; break; }
       case 'wood': case 'timber': {
         const pw = spec.kind === 'timber' ? s / 3 : s / 8; const plank = Math.floor(x / pw); const px = (x % pw) / pw;
         const grain = Math.sin((y / s) * 60 + b * 14 + plank * 3) * 0.5 + 0.5;

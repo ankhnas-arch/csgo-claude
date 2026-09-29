@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import type { CompiledMap } from '../data/map/compile';
 import { BACKDROP, SITES, type Prop, type MatKey } from '../data/map/layout';
 import { getMaterial, solid } from './materials';
@@ -18,14 +18,14 @@ export class MapBuilder {
     this.backdrop();
     this.siteMarkers();
     for (const [mat, geoms] of this.buckets) {
-      const merged = mergeGeometries(geoms, false); if (!merged) continue;
+      const merged = mergeGeometries(geoms, false); if (!merged) { console.error('map bucket merge failed for material', (mat as THREE.MeshStandardMaterial).name || mat.uuid, geoms.length); continue; }
       const mesh = new THREE.Mesh(merged, mat); mesh.castShadow = true; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false; this.group.add(mesh);
       for (const g of geoms) g.dispose();
     }
     for (const d of this.dynamic) this.group.add(d);
     return this.group;
   }
-  private push(mat: THREE.Material, g: THREE.BufferGeometry, m?: THREE.Matrix4) { if (m) g.applyMatrix4(m); let b = this.buckets.get(mat); if (!b) { b = []; this.buckets.set(mat, b); } b.push(g); }
+  private push(mat: THREE.Material, g: THREE.BufferGeometry, m?: THREE.Matrix4) { if (m) g.applyMatrix4(m); if (!g.index) g = mergeVertices(g); for (const k of Object.keys(g.attributes)) if (k !== 'position' && k !== 'normal' && k !== 'uv') g.deleteAttribute(k); if (!g.attributes.uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2)); let b = this.buckets.get(mat); if (!b) { b = []; this.buckets.set(mat, b); } b.push(g); }
   private box(mat: THREE.Material, w: number, h: number, d: number, x: number, y: number, z: number, rotY = 0, uvScale = 1) {
     const g = new THREE.BoxGeometry(w, h, d); scaleBoxUV(g, w, h, d, uvScale);
     const m = new THREE.Matrix4().makeRotationY(rotY).setPosition(x, y, z); this.push(mat, g, m);
@@ -49,19 +49,57 @@ export class MapBuilder {
     const len = Math.hypot(w.x1 - w.x0, w.z1 - w.z0); if (len < 0.05) return;
     const cx = (w.x0 + w.x1) / 2, cz = (w.z0 + w.z1) / 2; const yaw = Math.atan2(w.x1 - w.x0, w.z1 - w.z0);
     const h = w.yTop - w.yBase; const mat = getMaterial(w.mat, { repeat: 1 });
-    // main wall slab (thickness 0.5, pushed outward)
     const ox = w.outward[0] * 0.25, oz = w.outward[1] * 0.25;
+    const inX = -w.outward[0], inZ = -w.outward[1]; // toward the playable side
+    if (w.ledge) { // platform retaining wall: stone face + concrete cap
+      this.box(getMaterial('stone', { repeat: 1 }), 0.5, h, len + 0.5, cx + ox, w.yBase + h / 2, cz + oz, yaw, 0.5);
+      this.box(getMaterial('concrete'), 0.7, 0.12, len + 0.5, cx + ox, w.yTop - 0.06, cz + oz, yaw, 0.5);
+      return;
+    }
+    // main slab (thickness 0.5, pushed outward)
     this.box(mat, 0.5, h, len + 0.5, cx + ox, w.yBase + h / 2, cz + oz, yaw, 0.35);
-    // stone plinth course at the base and a thin cornice on top for edge definition
+    // low stone course at the base (subtle, ~0.55 m) and a thin cornice on top
     const plinth = getMaterial('stone', { repeat: 1 });
-    const baseY = Math.max(w.yBase + 1.0, Math.min(w.yTop - 0.5, w.yBase + 1.0));
-    this.box(plinth, 0.62, 0.7, len + 0.5, cx + ox, baseY + 0.35, cz + oz, yaw, 0.5);
-    this.box(getMaterial('concrete'), 0.7, 0.18, len + 0.5, cx + ox, w.yTop - 0.09, cz + oz, yaw, 0.5);
-    // occasional plaster damage patch (exposed brick) for wear
-    if (len > 6) { const t = ((w.x0 * 7 + w.z0 * 13) % 5) / 5; const px = w.x0 + (w.x1 - w.x0) * t, pz = w.z0 + (w.z1 - w.z0) * t; this.box(getMaterial('stone', { repeat: 2 }), 0.06, 1.2, 1.6, px + w.outward[0] * 0.0 - Math.cos(yaw) * 0.0 - w.outward[0] * 0.0 + (-w.outward[0]) * 0.02, w.yBase + 2.2, pz + (-w.outward[1]) * 0.02, yaw, 1); }
+    this.box(plinth, 0.58, 0.55, len + 0.5, cx + ox, w.yBase + 1.0 + 0.275, cz + oz, yaw, 0.5);
+    this.box(getMaterial('concrete'), 0.7, 0.16, len + 0.5, cx + ox, w.yTop - 0.08, cz + oz, yaw, 0.5);
+    // detail pass along long walls: recessed windows with wooden lintels, exposed-stone repair patches, small vents
+    const hash = Math.abs(Math.round(w.x0 * 7 + w.z0 * 13 + len * 3));
+    const along = (t: number) => [w.x0 + (w.x1 - w.x0) * t, w.z0 + (w.z1 - w.z0) * t] as const;
+    const floorTop = Math.max(w.yBase + 1.0, w.yTop - h + 1.0);
+    if (len > 5 && h > 4.5) {
+      const n = Math.max(1, Math.floor(len / 8));
+      for (let i = 0; i < n; i++) {
+        const t = (i + 0.5) / n + ((hash * (i + 1)) % 7 - 3) * 0.01; const [px, pz] = along(t);
+        const kind = (hash + i) % 3;
+        const wy = floorTop + 2.6 + ((hash + i * 5) % 3) * 0.35;
+        if (kind === 0) { // window: closed wooden shutters in a shallow recess (open dark ones are rarer), lintel + sill
+          const open = (hash + i) % 4 === 0;
+          this.box(solid('#1a1611', 0.9), 0.26, 1.3, 1.1, px + inX * 0.08, wy, pz + inZ * 0.08, yaw);
+          if (!open) { const sh = solid(['#4e6a63', '#6b4b3a', '#5a5a52', '#3d5a7a'][(hash + i) % 4], 0.75); this.box(sh, 0.06, 1.24, 0.5, px + inX * 0.16 + Math.cos(yaw) * 0.27, wy, pz + inZ * 0.16 - Math.sin(yaw) * 0.27, yaw); this.box(sh, 0.06, 1.24, 0.5, px + inX * 0.16 - Math.cos(yaw) * 0.27, wy, pz + inZ * 0.16 + Math.sin(yaw) * 0.27, yaw); const slat = solid('#111', 0.8); for (let k = 1; k < 7; k++) { this.box(slat, 0.065, 0.02, 0.44, px + inX * 0.16 + Math.cos(yaw) * 0.27, wy - 0.62 + k * 0.18, pz + inZ * 0.16 - Math.sin(yaw) * 0.27, yaw); this.box(slat, 0.065, 0.02, 0.44, px + inX * 0.16 - Math.cos(yaw) * 0.27, wy - 0.62 + k * 0.18, pz + inZ * 0.16 + Math.sin(yaw) * 0.27, yaw); } }
+          this.box(getMaterial('timber'), 0.34, 0.14, 1.4, px + inX * 0.12, wy + 0.72, pz + inZ * 0.12, yaw);
+          this.box(getMaterial('stone'), 0.36, 0.1, 1.3, px + inX * 0.16, wy - 0.7, pz + inZ * 0.16, yaw);
+          if (open) { const bar = solid('#2b2926', 0.5, 0.6); for (const dz of [-0.3, 0, 0.3]) this.box(bar, 0.03, 1.25, 0.03, px + inX * 0.06 + Math.cos(yaw) * dz, wy, pz + inZ * 0.06 - Math.sin(yaw) * dz, yaw); }
+        } else if (kind === 1) { // exposed stone repair patch
+          this.box(getMaterial('stone', { repeat: 2 }), 0.06, 0.9 + (hash % 3) * 0.3, 1.2 + (hash % 2) * 0.6, px + inX * 0.02, floorTop + 1.5 + (hash % 4) * 0.3, pz + inZ * 0.02, yaw, 1);
+        } else { // wooden beam ends / drain pipe
+          this.box(solid('#4a3a2a', 0.8), 0.5, 0.18, 0.18, px + inX * 0.2, floorTop + 3.6, pz + inZ * 0.2, yaw);
+          this.box(solid('#7c7267', 0.6, 0.4), 0.1, h - 1.2, 0.1, px + inX * 0.1 + Math.cos(yaw) * 0.6, w.yBase + 1.0 + (h - 1.2) / 2, pz + inZ * 0.1 - Math.sin(yaw) * 0.6, yaw);
+        }
+      }
+    }
+    // occasional wall lamp on the shady side for interiors/night-time look (unlit, decorative)
+    void hash;
   }
   private ceiling(c: CompiledMap['ceilings'][number]) {
-    const r = c.rect; const w = r.x1 - r.x0, d = r.z1 - r.z0; const isTimber = r.wall === 'timber';
+    const r = c.rect; const w = r.x1 - r.x0, d = r.z1 - r.z0; const isTimber = r.wall === 'timber' || r.id === 'ct_ramp';
+    // warm fill lights so covered passages stay legible (no shadows: cheap)
+    const nl = Math.max(1, Math.round(Math.max(w, d) / 10));
+    for (let i = 0; i < nl; i++) {
+      const t = (i + 0.5) / nl; const lx = w >= d ? r.x0 + w * t : (r.x0 + r.x1) / 2, lz = w >= d ? (r.z0 + r.z1) / 2 : r.z0 + d * t;
+      const light = new THREE.PointLight('#ffd9a8', 6, 14, 1.6); light.position.set(lx, c.y - 0.6, lz); this.dynamic.push(light);
+      const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), new THREE.MeshStandardMaterial({ color: '#fff2cc', emissive: '#ffd27a', emissiveIntensity: 1.5 })); bulb.position.set(lx, c.y - 0.55, lz); this.dynamic.push(bulb);
+      const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.5, 4), solid('#111')); cord.position.set(lx, c.y - 0.28, lz); this.dynamic.push(cord);
+    }
     this.box(getMaterial(isTimber ? 'timber' : 'plasterPale', { repeat: 1 }), w + 1, 0.5, d + 1, (r.x0 + r.x1) / 2, c.y + 0.25, (r.z0 + r.z1) / 2, 0, 0.4);
     // beams under the ceiling for tunnels/doors
     const beams = Math.max(1, Math.floor(Math.max(w, d) / 2.5));
@@ -119,7 +157,7 @@ export class MapBuilder {
       case 'palm': {
         const trunk = new THREE.CylinderGeometry(0.16, 0.26, p.sy, 8); const m = new THREE.Matrix4().makeRotationZ(0.06).setPosition(p.x, y + p.sy / 2, p.z); this.push(getMaterial('timber', { repeat: 1 }), trunk, m);
         const leaf = new THREE.MeshStandardMaterial({ color: '#4f7a2c', roughness: 0.85, side: THREE.DoubleSide });
-        for (let i = 0; i < 9; i++) { const ang = i / 9 * Math.PI * 2; const g = new THREE.PlaneGeometry(0.5, 3.0); g.translate(0, 1.4, 0); const mm = new THREE.Matrix4().makeRotationY(ang).multiply(new THREE.Matrix4().makeRotationX(-1.1)).setPosition(p.x, y + p.sy - 0.2, p.z); this.push(leaf, g, mm); }
+        for (let i = 0; i < 14; i++) { const ang = i / 14 * Math.PI * 2 + (i % 2) * 0.2; const g = new THREE.PlaneGeometry(0.42, 2.8, 1, 6); const pos = g.attributes.position as THREE.BufferAttribute; for (let k = 0; k < pos.count; k++) { const yy = pos.getY(k) + 1.4; pos.setY(k, yy); pos.setZ(k, -Math.pow(Math.max(0, yy) / 2.8, 2) * 1.6); pos.setX(k, pos.getX(k) * (1 - Math.abs(yy) / 3.2)); } g.computeVertexNormals(); const mm = new THREE.Matrix4().makeRotationY(ang).multiply(new THREE.Matrix4().makeRotationX(-0.9 - (i % 3) * 0.25)).setPosition(p.x, y + p.sy - 0.15, p.z); this.push(leaf, g, mm); }
         break; }
       case 'cable': { const g = new THREE.CylinderGeometry(0.015, 0.015, p.sx, 5); const m = new THREE.Matrix4().makeRotationZ(Math.PI / 2).setPosition(p.x, y, p.z); this.push(solid('#1b1b1b', 0.7), g, m); break; }
       case 'shutter': { const m = solid(p.color ?? '#3e6f6a', 0.7, 0.2); this.box(m, p.sx, p.sy, p.sz, p.x, y + p.sy / 2, p.z); const slat = solid('#111', 0.8); for (let i = 1; i < 9; i++) this.box(slat, p.sx + 0.01, 0.02, p.sz - 0.2, p.x - 0.005, y + p.sy * i / 9, p.z); this.box(getMaterial('stone'), 0.2, 0.15, p.sz + 0.4, p.x, y + p.sy + 0.08, p.z); break; }
@@ -132,17 +170,25 @@ export class MapBuilder {
   }
   private backdrop() {
     const win = windowMaterial();
-    for (const b of BACKDROP) {
-      const mat = getMaterial(b.mat, { repeat: 1 });
+    const tints: MatKey[] = ['plasterWarm', 'plasterPale', 'concrete'];
+    BACKDROP.forEach((b, bi) => {
+      const mat = getMaterial(tints[(bi * 7 + Math.abs(b.x)) % 3], { repeat: 1 });
       this.box(mat, b.sx, b.h, b.sz, b.x, -1 + b.h / 2, b.z, 0, 0.3);
-      // window bands
+      // recessed windows (small, spaced) on each side, only above the typical wall height so they read as far buildings
       const floors = Math.max(1, Math.floor(b.h / 3.2));
-      for (let f = 0; f < floors; f++) { const yy = -1 + 1.8 + f * 3.2; for (const side of [-1, 1]) { this.box(win, b.sx + 0.04, 1.1, 0.6, b.x, yy, b.z + side * (b.sz / 2 - 0.3)); this.box(win, 0.6, 1.1, b.sz + 0.04, b.x + side * (b.sx / 2 - 0.3), yy, b.z); } }
-      // parapet + rooftop details
+      for (let f = 0; f < floors; f++) {
+        const yy = -1 + 2.0 + f * 3.2; if (yy < 4.5) continue;
+        const nx = Math.max(1, Math.floor(b.sx / 3.5)), nz = Math.max(1, Math.floor(b.sz / 3.5));
+        for (let i = 0; i < nx; i++) for (const side of [-1, 1]) { const x = b.x - b.sx / 2 + (i + 0.5) * b.sx / nx; this.box(win, 0.9, 1.2, 0.3, x, yy, b.z + side * (b.sz / 2 - 0.1)); this.box(getMaterial('plasterPale'), 1.2, 0.14, 0.4, x, yy + 0.67, b.z + side * (b.sz / 2 - 0.1)); }
+        for (let i = 0; i < nz; i++) for (const side of [-1, 1]) { const z = b.z - b.sz / 2 + (i + 0.5) * b.sz / nz; this.box(win, 0.3, 1.2, 0.9, b.x + side * (b.sx / 2 - 0.1), yy, z); this.box(getMaterial('plasterPale'), 0.4, 0.14, 1.2, b.x + side * (b.sx / 2 - 0.1), yy + 0.67, z); }
+      }
+      // parapet, rooftop clutter (water tank, AC box, dish)
       this.box(getMaterial('concrete'), b.sx + 0.4, 0.4, b.sz + 0.4, b.x, -1 + b.h + 0.2, b.z);
-      if (b.dome) { const g = new THREE.SphereGeometry(Math.min(b.sx, b.sz) * 0.36, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2); const m = new THREE.Matrix4().setPosition(b.x, -1 + b.h + 0.3, b.z); this.push(solid('#d9e2e6', 0.5, 0.2), g, m); }
-      if (b.minaret) { const g = new THREE.CylinderGeometry(0.9, 1.1, 9, 12); const m = new THREE.Matrix4().setPosition(b.x + b.sx * 0.3, -1 + b.h + 4.5, b.z); this.push(getMaterial('plasterPale', { repeat: 1 }), g, m); const cone = new THREE.ConeGeometry(1.2, 2.5, 12); this.push(solid('#3f5f72', 0.5), cone, new THREE.Matrix4().setPosition(b.x + b.sx * 0.3, -1 + b.h + 10.2, b.z)); }
-    }
+      if (bi % 2 === 0) { const g = new THREE.CylinderGeometry(0.7, 0.7, 1.2, 12); this.push(solid('#b9b3a6', 0.7, 0.3), g, new THREE.Matrix4().setPosition(b.x + b.sx * 0.25, -1 + b.h + 1.0, b.z - b.sz * 0.2)); }
+      if (bi % 3 === 0) this.box(solid('#8f8a80', 0.6, 0.4), 1.2, 0.8, 1.0, b.x - b.sx * 0.25, -1 + b.h + 0.8, b.z + b.sz * 0.2);
+      if (b.dome) { const g = new THREE.SphereGeometry(Math.min(b.sx, b.sz) * 0.36, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2); const m = new THREE.Matrix4().setPosition(b.x, -1 + b.h + 0.3, b.z); this.push(solid('#cfd9dd', 0.5, 0.2), g, m); const drum = new THREE.CylinderGeometry(Math.min(b.sx, b.sz) * 0.36, Math.min(b.sx, b.sz) * 0.36, 1.2, 20); this.push(getMaterial('plasterPale', { repeat: 1 }), drum, new THREE.Matrix4().setPosition(b.x, -1 + b.h + 0.4, b.z)); }
+      if (b.minaret) { const g = new THREE.CylinderGeometry(0.9, 1.1, 9, 12); const m = new THREE.Matrix4().setPosition(b.x + b.sx * 0.3, -1 + b.h + 4.5, b.z); this.push(getMaterial('plasterPale', { repeat: 1 }), g, m); const ring = new THREE.CylinderGeometry(1.3, 1.3, 0.5, 12); this.push(getMaterial('stone'), ring, new THREE.Matrix4().setPosition(b.x + b.sx * 0.3, -1 + b.h + 8.5, b.z)); const cone = new THREE.ConeGeometry(1.1, 2.2, 12); this.push(solid('#3f5f72', 0.5), cone, new THREE.Matrix4().setPosition(b.x + b.sx * 0.3, -1 + b.h + 10.1, b.z)); }
+    });
     // ground fill far below/around, sky handled by Scene
     this.box(getMaterial('sand', { repeat: 12 }), 240, 0.5, 240, 0, -2.3, 0, 0, 0.1);
   }
@@ -161,5 +207,5 @@ function scaleBoxUV(g: THREE.BoxGeometry, w: number, h: number, d: number, s: nu
   for (let f = 0; f < 6; f++) for (let i = 0; i < 4; i++) { const k = f * 4 + i; uv.setXY(k, uv.getX(k) * sizes[f][0] * s, uv.getY(k) * sizes[f][1] * s); }
 }
 let winMat: THREE.MeshStandardMaterial | null = null;
-function windowMaterial() { if (!winMat) winMat = new THREE.MeshStandardMaterial({ color: '#1e2a33', roughness: 0.3, metalness: 0.2 }); return winMat; }
+function windowMaterial() { if (!winMat) winMat = new THREE.MeshStandardMaterial({ color: '#5a6a78', roughness: 0.3, metalness: 0.3 }); return winMat; }
 export { MatKey };

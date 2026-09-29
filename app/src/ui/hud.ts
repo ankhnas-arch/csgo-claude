@@ -55,10 +55,12 @@ export class Hud {
   private drawRadarBg() {
     const c = this.bg.getContext('2d')!; c.fillStyle = '#0d1117'; c.fillRect(0, 0, 400, 400);
     for (const r of RECTS) { const [x0, y0] = this.map(r.x0, r.z0), [x1, y1] = this.map(r.x1, r.z1); c.fillStyle = r.ceiling ? '#2b3340' : (r.y >= 1.5 ? '#3d4654' : r.y < -0.5 ? '#222a34' : '#333b47'); c.fillRect(x0, y0, x1 - x0, y1 - y0); }
-    c.font = 'bold 22px Arial'; c.fillStyle = 'rgba(255,255,255,0.7)'; c.textAlign = 'center';
-    for (const s of SITES) { const [x, y] = this.map((s.x0 + s.x1) / 2, (s.z0 + s.z1) / 2); c.fillText(s.id, x, y + 8); }
-    c.font = '9px Arial'; c.fillStyle = 'rgba(255,255,255,0.35)';
-    for (const r of RECTS) if (r.radar) { const [x, y] = this.map((r.x0 + r.x1) / 2, (r.z0 + r.z1) / 2); c.fillText(r.radar, x, y - 6); }
+  }
+  private drawLabels(c: CanvasRenderingContext2D, yaw: number) {
+    c.font = 'bold 8px Arial'; c.fillStyle = 'rgba(255,255,255,0.45)'; c.textAlign = 'center';
+    for (const r of RECTS) if (r.radar) { const [x, y] = this.map((r.x0 + r.x1) / 2, (r.z0 + r.z1) / 2); c.save(); c.translate(x, y - 6); c.rotate(yaw); c.fillText(r.radar, 0, 0); c.restore(); }
+    c.font = 'bold 22px Arial'; c.fillStyle = 'rgba(255,255,255,0.75)';
+    for (const s of SITES) { const [x, y] = this.map((s.x0 + s.x1) / 2, (s.z0 + s.z1) / 2); c.save(); c.translate(x, y + 8); c.rotate(yaw); c.fillText(s.id, 0, 0); c.restore(); }
   }
   private map(x: number, z: number): [number, number] { return [200 + x * 3.2, 200 + z * 3.2]; }
   private drawRadar(g: Game, view: Actor) {
@@ -66,7 +68,7 @@ export class Hud {
     // rotate map so that the player's forward is up, centred on the player (zoomed)
     const [px, pz] = this.map(view.x, view.z);
     c.translate(200, 200); c.scale(1.6, 1.6); c.rotate(-view.yaw); c.translate(-px, -pz);
-    c.drawImage(this.bg, 0, 0);
+    c.drawImage(this.bg, 0, 0); this.drawLabels(c, view.yaw);
     const me = g.player;
     const b = g.match.bomb;
     const drawDot = (x: number, z: number, col: string, r: number, yaw?: number) => { const [ax, az] = this.map(x, z); c.fillStyle = col; c.beginPath(); c.arc(ax, az, r, 0, 6.28); c.fill(); if (yaw !== undefined) { c.strokeStyle = col; c.lineWidth = 2; c.beginPath(); c.moveTo(ax, az); c.lineTo(ax - Math.sin(yaw) * r * 2.4, az - Math.cos(yaw) * r * 2.4); c.stroke(); } };

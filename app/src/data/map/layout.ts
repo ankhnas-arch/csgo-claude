@@ -5,7 +5,7 @@
  * upper tunnels -> B tunnel arch -> B site; mid <-> lower tunnels <-> upper tunnels; CT -> B doors corridor -> B.
  * Coordinates in metres; +x east, +z south (north is -z). y is floor height.
  */
-export type MatKey = 'sand' | 'plasterWarm' | 'plasterPale' | 'stone' | 'woodOld' | 'metalRust' | 'metalBlue' | 'metalOlive' | 'concrete' | 'asphalt' | 'timber' | 'crate' | 'canvasRed' | 'tarpOlive' | 'metalGreen';
+export type MatKey = 'sand' | 'plasterWarm' | 'plasterPale' | 'stone' | 'flagstone' | 'woodOld' | 'metalRust' | 'metalBlue' | 'metalOlive' | 'concrete' | 'asphalt' | 'timber' | 'crate' | 'canvasRed' | 'tarpOlive' | 'metalGreen';
 export interface Rect {
   id: string; name: string; x0: number; x1: number; z0: number; z1: number; y: number;
   /** ramp: floor rises from y at the 'from' edge to yEnd at the opposite edge */
@@ -27,37 +27,40 @@ export interface CameraDef { id: string; ref: string; pos: [number, number, numb
 const H = 5.5;
 export const RECTS: Rect[] = [
   // ---- T side (elevated spawn plateau at y=2)
-  { id: 'tspawn', name: 'T Spawn', x0: -12, x1: 12, z0: 38, z1: 52, y: 2, region: 'T', floor: 'sand', wall: 'plasterWarm', radar: 'T SPAWN' },
+  { id: 'tspawn', name: 'T Spawn', x0: -12, x1: 12, z0: 38, z1: 52, y: 2, wallHeight: 4.8, region: 'T', floor: 'sand', wall: 'plasterWarm', radar: 'T SPAWN' },
   { id: 'tramp_mid', name: 'T ramp to mid', x0: -8, x1: 8, z0: 28, z1: 38, y: 2, ramp: { axis: 'z', from: 'max', yEnd: 0 }, region: 'T', floor: 'sand', wall: 'plasterWarm' },
   { id: 'tramp_long', name: 'Outside Long ramp', x0: 12, x1: 18, z0: 38, z1: 48, y: 2, ramp: { axis: 'x', from: 'min', yEnd: 0 }, region: 'long', floor: 'sand', wall: 'plasterWarm' },
   { id: 'out_long', name: 'Outside Long', x0: 18, x1: 28, z0: 36, z1: 48, y: 0, region: 'long', floor: 'sand', wall: 'plasterWarm', radar: 'OUTSIDE LONG' },
-  { id: 'long_doors', name: 'Long Doors', x0: 28, x1: 33, z0: 39, z1: 45, y: 0, ceiling: 4.2, region: 'long', floor: 'stone', wall: 'plasterPale', radar: 'LONG DOORS' },
-  { id: 'long', name: 'Long A', x0: 33, x1: 43, z0: -14, z1: 46, y: 0, region: 'long', floor: 'sand', wall: 'plasterWarm', radar: 'LONG' },
+  { id: 'long_doors', name: 'Long Doors', x0: 28, x1: 33, z0: 39, z1: 45, y: 0, ceiling: 4.2, region: 'long', floor: 'flagstone', wall: 'plasterPale', radar: 'LONG DOORS' },
+  { id: 'long', name: 'Long A', x0: 33, x1: 43, z0: -14, z1: 46, y: 0, wallHeight: 6.5, region: 'long', floor: 'sand', wall: 'plasterWarm', radar: 'LONG' },
   { id: 'pit_slope', name: 'Pit slope', x0: 43, x1: 46, z0: -8, z1: 0, y: 0, ramp: { axis: 'x', from: 'min', yEnd: -1.6 }, region: 'long', floor: 'sand', wall: 'plasterWarm' },
   { id: 'pit', name: 'Pit', x0: 46, x1: 52, z0: -10, z1: 2, y: -1.6, region: 'long', floor: 'sand', wall: 'plasterWarm', radar: 'PIT' },
   { id: 'long_corner', name: 'Long corner', x0: 33, x1: 43, z0: -22, z1: -14, y: 0, region: 'long', floor: 'sand', wall: 'plasterWarm' },
   { id: 'a_ramp', name: 'A Long ramp', x0: 33, x1: 43, z0: -30, z1: -22, y: 0, ramp: { axis: 'z', from: 'max', yEnd: 2 }, region: 'A', floor: 'sand', wall: 'plasterWarm', radar: 'A RAMP' },
   // ---- A site (elevated y=2)
-  { id: 'a_site', name: 'A Site', x0: 22, x1: 43, z0: -46, z1: -30, y: 2, region: 'A', floor: 'sand', wall: 'plasterWarm', radar: 'A SITE' },
-  { id: 'a_short_entry', name: 'Short to A', x0: 22, x1: 30, z0: -30, z1: -22, y: 2, region: 'short', floor: 'stone', wall: 'plasterWarm' },
-  { id: 'short', name: 'A Short', x0: 16, x1: 22, z0: -30, z1: -12, y: 2, region: 'short', floor: 'stone', wall: 'plasterPale', radar: 'SHORT' },
-  { id: 'catwalk_stairs', name: 'Catwalk stairs', x0: 8, x1: 16, z0: -18, z1: -12, y: 0, ramp: { axis: 'x', from: 'min', yEnd: 2 }, region: 'short', floor: 'stone', wall: 'plasterPale', radar: 'CATWALK' },
-  { id: 'ct_ramp', name: 'CT ramp', x0: 14, x1: 22, z0: -46, z1: -38, y: 0, ramp: { axis: 'x', from: 'min', yEnd: 2 }, ceiling: 4.6, region: 'CT', floor: 'timber', wall: 'timber', radar: 'CT RAMP' },
+  { id: 'a_site', name: 'A Site', x0: 22, x1: 43, z0: -46, z1: -30, y: 2, wallHeight: 6.0, region: 'A', floor: 'sand', wall: 'plasterWarm', radar: 'A SITE' },
+  { id: 'a_short_entry', name: 'Short to A', x0: 22, x1: 30, z0: -30, z1: -22, y: 2, region: 'short', floor: 'flagstone', wall: 'plasterWarm' },
+  { id: 'short', name: 'A Short', x0: 16, x1: 22, z0: -30, z1: -12, y: 2, region: 'short', floor: 'flagstone', wall: 'plasterPale', radar: 'SHORT' },
+  { id: 'catwalk_stairs', name: 'Catwalk stairs', x0: 8, x1: 16, z0: -18, z1: -12, y: 0, ramp: { axis: 'x', from: 'min', yEnd: 2 }, region: 'short', floor: 'flagstone', wall: 'plasterPale', radar: 'CATWALK' },
+  { id: 'ct_ramp', name: 'CT ramp', x0: 14, x1: 22, z0: -46, z1: -38, y: 0, ramp: { axis: 'x', from: 'min', yEnd: 2 }, ceiling: 4.6, region: 'CT', floor: 'flagstone', wall: 'plasterWarm', radar: 'CT RAMP' },
   // ---- Mid
-  { id: 'mid', name: 'Mid', x0: -8, x1: 8, z0: -24, z1: 28, y: 0, region: 'mid', floor: 'sand', wall: 'plasterWarm', radar: 'MID' },
-  { id: 'mid_doors', name: 'Mid Doors', x0: -5, x1: 5, z0: -30, z1: -24, y: 0, ceiling: 4.4, region: 'mid', floor: 'stone', wall: 'plasterPale', radar: 'DOORS' },
+  { id: 'mid', name: 'Mid', x0: -8, x1: 8, z0: -24, z1: 28, y: 0, wallHeight: 6.2, region: 'mid', floor: 'sand', wall: 'plasterWarm', radar: 'MID' },
+  { id: 'mid_doors', name: 'Mid Doors', x0: -5, x1: 5, z0: -30, z1: -24, y: 0, ceiling: 4.4, region: 'mid', floor: 'flagstone', wall: 'plasterPale', radar: 'DOORS' },
   { id: 'ct_mid', name: 'CT Mid', x0: -8, x1: 8, z0: -38, z1: -30, y: 0, region: 'CT', floor: 'sand', wall: 'plasterWarm', radar: 'CT MID' },
-  { id: 'ctspawn', name: 'CT Spawn', x0: -8, x1: 14, z0: -54, z1: -38, y: 0, region: 'CT', floor: 'asphalt', wall: 'plasterWarm', radar: 'CT SPAWN' },
+  { id: 'ctspawn', name: 'CT Spawn', x0: -8, x1: 14, z0: -54, z1: -38, y: 0, wallHeight: 5.0, region: 'CT', floor: 'asphalt', wall: 'plasterWarm', radar: 'CT SPAWN' },
   // ---- B side
-  { id: 'b_doors_corr', name: 'B Doors corridor', x0: -26, x1: -8, z0: -46, z1: -40, y: 0, ceiling: 4.4, region: 'B', floor: 'stone', wall: 'plasterPale', radar: 'B DOORS' },
-  { id: 'b_site', name: 'B Site', x0: -46, x1: -26, z0: -48, z1: -26, y: 0, region: 'B', floor: 'sand', wall: 'plasterWarm', radar: 'B SITE' },
-  { id: 'b_arch', name: 'B tunnel arch', x0: -40, x1: -32, z0: -26, z1: -20, y: 0, ceiling: 4.0, region: 'tunnels', floor: 'stone', wall: 'plasterPale' },
-  { id: 'upper_tun', name: 'Upper Tunnels', x0: -40, x1: -32, z0: -20, z1: 30, y: 0, ceiling: 4.2, region: 'tunnels', floor: 'stone', wall: 'plasterPale', radar: 'UPPER TUNNELS' },
+  { id: 'b_doors_corr', name: 'B Doors corridor', x0: -26, x1: -8, z0: -46, z1: -40, y: 0, ceiling: 4.4, region: 'B', floor: 'flagstone', wall: 'plasterPale', radar: 'B DOORS' },
+  { id: 'b_site', name: 'B Site', x0: -46, x1: -26, z0: -41, z1: -26, y: 0, wallHeight: 6.4, region: 'B', floor: 'sand', wall: 'plasterWarm', radar: 'B SITE' },
+  { id: 'b_back', name: 'B back', x0: -35, x1: -26, z0: -48, z1: -41, y: 0, wallHeight: 6.4, region: 'B', floor: 'sand', wall: 'plasterWarm' },
+  { id: 'b_stairs', name: 'B platform stairs', x0: -38, x1: -35, z0: -48, z1: -41, y: 0, ramp: { axis: 'x', from: 'max', yEnd: 1.0 }, wallHeight: 6.4, region: 'B', floor: 'flagstone', wall: 'plasterWarm' },
+  { id: 'b_plat', name: 'B platform', x0: -46, x1: -38, z0: -48, z1: -41, y: 1.0, wallHeight: 5.4, region: 'B', floor: 'concrete', wall: 'plasterWarm', radar: 'B PLAT' },
+  { id: 'b_arch', name: 'B tunnel arch', x0: -40, x1: -32, z0: -26, z1: -20, y: 0, ceiling: 4.0, region: 'tunnels', floor: 'flagstone', wall: 'plasterPale' },
+  { id: 'upper_tun', name: 'Upper Tunnels', x0: -40, x1: -32, z0: -20, z1: 30, y: 0, ceiling: 4.2, region: 'tunnels', floor: 'flagstone', wall: 'plasterPale', radar: 'UPPER TUNNELS' },
   { id: 'out_tun', name: 'Outside Tunnels', x0: -40, x1: -18, z0: 30, z1: 48, y: 0, region: 'tunnels', floor: 'sand', wall: 'plasterWarm', radar: 'OUTSIDE TUNNELS' },
   { id: 'tramp_tun', name: 'T ramp to tunnels', x0: -18, x1: -12, z0: 38, z1: 48, y: 2, ramp: { axis: 'x', from: 'max', yEnd: 0 }, region: 'tunnels', floor: 'sand', wall: 'plasterWarm' },
-  { id: 'lower_stairs_w', name: 'Lower tunnel stairs (west)', x0: -32, x1: -28, z0: -3, z1: 3, y: 0, ramp: { axis: 'x', from: 'min', yEnd: -1.2 }, ceiling: 3.8, region: 'tunnels', floor: 'stone', wall: 'plasterPale' },
-  { id: 'lower_tun', name: 'Lower Tunnels', x0: -28, x1: -12, z0: -3, z1: 3, y: -1.2, ceiling: 3.6, region: 'tunnels', floor: 'stone', wall: 'plasterPale', radar: 'LOWER TUNNELS' },
-  { id: 'lower_stairs_e', name: 'Lower tunnel stairs (east)', x0: -12, x1: -8, z0: -3, z1: 3, y: -1.2, ramp: { axis: 'x', from: 'min', yEnd: 0 }, ceiling: 3.8, region: 'tunnels', floor: 'stone', wall: 'plasterPale' },
+  { id: 'lower_stairs_w', name: 'Lower tunnel stairs (west)', x0: -32, x1: -28, z0: -3, z1: 3, y: 0, ramp: { axis: 'x', from: 'min', yEnd: -1.2 }, ceiling: 3.8, region: 'tunnels', floor: 'flagstone', wall: 'plasterPale' },
+  { id: 'lower_tun', name: 'Lower Tunnels', x0: -28, x1: -12, z0: -3, z1: 3, y: -1.2, ceiling: 3.6, region: 'tunnels', floor: 'flagstone', wall: 'plasterPale', radar: 'LOWER TUNNELS' },
+  { id: 'lower_stairs_e', name: 'Lower tunnel stairs (east)', x0: -12, x1: -8, z0: -3, z1: 3, y: -1.2, ramp: { axis: 'x', from: 'min', yEnd: 0 }, ceiling: 3.8, region: 'tunnels', floor: 'flagstone', wall: 'plasterPale' },
 ];
 
 export const SITES: SiteDef[] = [
@@ -136,9 +139,9 @@ export const PROPS: Prop[] = [
   // B site (CS08): stepped crates on platform, low wall, barrels, olive tarps, pointed arch handled by rect ceiling + arch prop
   { kind: 'arch', x: -36, y: 0, z: -26, sx: 8, sy: 4.4, sz: 1.0 },
   { kind: 'lowwall', x: -34, y: 0, z: -36, sx: 6, sy: 1.0, sz: 0.5, mat: 'plasterPale', collide: true, label: 'B low wall' },
-  { kind: 'box', x: -42, y: 0, z: -44, sx: 2.6, sy: 1.4, sz: 2.6, mat: 'crate', collide: true, label: 'B platform' },
-  { kind: 'box', x: -42, y: 1.4, z: -44, sx: 2.0, sy: 1.2, sz: 2.0, mat: 'crate', collide: true },
-  { kind: 'box', x: -39, y: 0, z: -44, sx: 2.0, sy: 0.9, sz: 2.0, mat: 'crate', collide: true },
+  { kind: 'box', x: -43.5, y: 1.0, z: -45.5, sx: 2.4, sy: 1.3, sz: 2.4, mat: 'crate', collide: true, label: 'B platform' },
+  { kind: 'box', x: -43.5, y: 2.3, z: -45.5, sx: 1.8, sy: 1.1, sz: 1.8, mat: 'crate', collide: true },
+  { kind: 'box', x: -40.5, y: 1.0, z: -45.8, sx: 1.8, sy: 0.9, sz: 1.8, mat: 'crate', collide: true },
   { kind: 'box', x: -30, y: 0, z: -30, sx: 2.2, sy: 1.5, sz: 2.2, mat: 'crate', collide: true, label: 'B default' },
   { kind: 'box', x: -30, y: 0, z: -44, sx: 1.6, sy: 1.2, sz: 1.6, mat: 'tarpOlive', collide: true },
   { kind: 'box', x: -28, y: 0, z: -44, sx: 1.4, sy: 0.9, sz: 1.4, mat: 'tarpOlive', collide: true },
