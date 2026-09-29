@@ -18,6 +18,9 @@ export function loadWeaponGLTF(id: string): Promise<GLTF | null> {
   cache.set(id, p); return p;
 }
 export const WEAPON_STATS: Record<string, { triangles: number; placeholder: boolean; clips: string[] }> = {};
+export interface AnimMeta { fps: number; clips: Record<string, [number, number]>; events?: Record<string, number> }
+const metaCache = new Map<string, Promise<AnimMeta | null>>();
+export function loadAnimMeta(id: string): Promise<AnimMeta | null> { let p = metaCache.get(id); if (p) return p; p = fetch(`./assets/weapons/${id}.anim.json`).then(r => r.ok ? r.json() : null).catch(() => null); metaCache.set(id, p); return p; }
 
 export class ViewModel {
   scene = new THREE.Scene(); camera: THREE.PerspectiveCamera;
@@ -41,8 +44,11 @@ export class ViewModel {
     const g = await loadWeaponGLTF(id);
     let lw: LoadedWeapon;
     if (g) {
-      const root = g.scene; let tris = 0; root.traverse(o => { if ((o as THREE.Mesh).isMesh) { const m = o as THREE.Mesh; m.castShadow = false; m.frustumCulled = false; const idx = m.geometry.index; tris += idx ? idx.count / 3 : m.geometry.attributes.position.count / 3; } });
+      const root = g.scene; let tris = 0; root.traverse(o => { if (o.name === 'world') o.visible = false; if ((o as THREE.Mesh).isMesh) { const m = o as THREE.Mesh; m.castShadow = false; m.frustumCulled = false; const idx = m.geometry.index; tris += idx ? idx.count / 3 : m.geometry.attributes.position.count / 3; } });
       const clips = new Map<string, THREE.AnimationClip>(); for (const c of g.animations) clips.set(c.name, c);
+      // Blender pipeline: one scene-timeline animation + <id>.anim.json with frame ranges -> subclips
+      const meta = await loadAnimMeta(id);
+      if (meta && g.animations.length) { const full = g.animations[0]; for (const [name, [s0, s1]] of Object.entries(meta.clips)) { try { clips.set(name, THREE.AnimationUtils.subclip(full, name, s0, s1, meta.fps)); } catch { /* ignore bad range */ } } }
       const mixer = g.animations.length ? new THREE.AnimationMixer(root) : null;
       const muzzle = root.getObjectByName('muzzle') ?? root, eject = root.getObjectByName('eject') ?? root;
       lw = { root, mixer, clips, muzzle, eject, placeholder: false, triangles: tris };
