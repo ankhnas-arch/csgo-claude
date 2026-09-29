@@ -154,7 +154,7 @@ export class Game {
       a.plantProgress = 0; a.defuseProgress = 0;
     }
     const cur = a.active;
-    if (inp.drop && !frozen) this.dropActive(a);
+    if (inp.drop && this.match.phase !== 'roundEnd' && this.match.phase !== 'matchEnd') this.dropActive(a);
     if (inp.reload && !frozen && cur.tryReload()) { const wasZ = cur.zoomLevel; cur.zoomLevel = 0; a.rezoomLevel = 0; if (wasZ) this.events.emit('scope', { actorId: a.id, level: 0 }); this.events.emit('reload', { actorId: a.id, weapon: cur.def.id, stage: 'start' }); a.plantProgress = 0; }
     if (inp.inspect && cur.action === 'idle' && cur.def.demo.inspectTime > 0 && cur.zoomLevel === 0) cur.startAction('inspect', cur.def.demo.inspectTime);
     // scope toggle (AWP only)

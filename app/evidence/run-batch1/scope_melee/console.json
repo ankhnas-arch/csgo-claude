@@ -1,0 +1,12 @@
+{
+  "errors": [
+    "requestfailed: http://127.0.0.1:5173/assets/weapons/ak47.glb"
+  ],
+  "warnings": [],
+  "console": [
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected."
+  ]
+}

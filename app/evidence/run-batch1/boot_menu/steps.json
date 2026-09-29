@@ -1,0 +1,66 @@
+{
+  "name": "boot_menu",
+  "status": "PASS",
+  "steps": [
+    {
+      "name": "cold load reached menu",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "canvas has webgl2 context (not blank)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "settings panel opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "credits panel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "equipment panel",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "setup panel with team/difficulty/economy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Play activates match",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "controls explained on first entry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pointer lock acquired after intentional click",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "notes": [],
+  "shots": [
+    "evidence/run-batch1/boot_menu/menu.png",
+    "evidence/run-batch1/boot_menu/settings.png",
+    "evidence/run-batch1/boot_menu/equipment.png",
+    "evidence/run-batch1/boot_menu/setup.png",
+    "evidence/run-batch1/boot_menu/controls_card.png",
+    "evidence/run-batch1/boot_menu/freeze_hud.png"
+  ],
+  "errors": []
+}

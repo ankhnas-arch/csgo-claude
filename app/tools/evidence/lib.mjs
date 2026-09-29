@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import fs from 'node:fs';
 export const ROOT = new URL('../../', import.meta.url).pathname;
 export async function launch(opts = {}) {
-  const { width = 1920, height = 1080, video = null, url = 'http://127.0.0.1:5173/?quality=low&scale=0.5' } = opts;
+  const { width = 1920, height = 1080, video = null, url = 'http://127.0.0.1:4173/?quality=low&scale=0.5' } = opts;
   const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_PATH ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl', '--autoplay-policy=no-user-gesture-required', '--disable-features=PointerLockPermissionPrompt'] });
   const ctx = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1, recordVideo: video ? { dir: video, size: { width, height } } : undefined });
   const page = await ctx.newPage();

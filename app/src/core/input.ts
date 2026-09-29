@@ -20,10 +20,11 @@ export class InputSys {
     window.addEventListener('blur', () => { this.clear(); });
     document.addEventListener('visibilitychange', () => { if (document.hidden) this.clear(); });
     this.canvas.addEventListener('mousemove', e => { if (this.locked) { this.dx += e.movementX; this.dy += e.movementY; } });
-    this.canvas.addEventListener('mousedown', e => { if (!this.enabled) return; if (this.locked) { this.mouseDown.add(e.button); this.mousePressed.add(e.button); e.preventDefault(); } else { this.onClickUnlocked?.(); } });
+    // While pointer-locked, button/wheel events belong to the game wherever the (hidden) cursor is; otherwise only canvas clicks matter.
+    window.addEventListener('mousedown', e => { if (!this.enabled) return; if (this.locked) { this.mouseDown.add(e.button); this.mousePressed.add(e.button); e.preventDefault(); } else if (e.target === this.canvas) { this.onClickUnlocked?.(); } });
     window.addEventListener('mouseup', e => { this.mouseDown.delete(e.button); });
-    this.canvas.addEventListener('contextmenu', e => e.preventDefault());
-    this.canvas.addEventListener('wheel', e => { if (this.locked) { this.scroll += Math.sign(e.deltaY); e.preventDefault(); } }, { passive: false });
+    window.addEventListener('contextmenu', e => { if (this.locked || e.target === this.canvas) e.preventDefault(); });
+    window.addEventListener('wheel', e => { if (this.locked) { this.scroll += Math.sign(e.deltaY); e.preventDefault(); } }, { passive: false });
     document.addEventListener('pointerlockchange', () => { const l = document.pointerLockElement === this.canvas; if (l !== this.locked) { this.locked = l; if (!l) { this.clear(); if (this.wantsLock) { this.wantsLock = false; this.onEscape?.(); } } this.onLockChange?.(l); } });
     document.addEventListener('pointerlockerror', () => { this.locked = false; this.onLockChange?.(false); });
   }
@@ -36,7 +37,7 @@ export class InputSys {
     const k = (c: string) => this.keys.has(c);
     const forward = (k('KeyW') ? 1 : 0) - (k('KeyS') ? 1 : 0), right = (k('KeyD') ? 1 : 0) - (k('KeyA') ? 1 : 0);
     let slot: number | null = null; for (let i = 1; i <= 5; i++) if (this.pressed.has('Digit' + i)) slot = i;
-    const inp: PlayerInput = { ...EMPTY_INPUT, forward, right, jump: k('Space'), crouch: k('ControlLeft') || k('ControlRight'), walk: k('ShiftLeft') || k('ShiftRight'), fire: this.mouseDown.has(0), firePressed: this.mousePressed.has(0), altPressed: this.mousePressed.has(2), reload: this.pressed.has('KeyR'), inspect: this.pressed.has('KeyF'), interact: k('KeyE'), drop: this.pressed.has('KeyG'), slot, scroll: this.scroll, prevWeapon: this.pressed.has('KeyQ'), lookDx: this.dx, lookDy: this.dy };
+    const inp: PlayerInput = { ...EMPTY_INPUT, forward, right, jump: k('Space') || this.pressed.has('Space'), crouch: k('ControlLeft') || k('ControlRight'), walk: k('ShiftLeft') || k('ShiftRight'), fire: this.mouseDown.has(0), firePressed: this.mousePressed.has(0), altPressed: this.mousePressed.has(2), reload: this.pressed.has('KeyR'), inspect: this.pressed.has('KeyF'), interact: k('KeyE'), drop: this.pressed.has('KeyG'), slot, scroll: this.scroll, prevWeapon: this.pressed.has('KeyQ'), lookDx: this.dx, lookDy: this.dy };
     this.pressed.clear(); this.mousePressed.clear(); this.dx = this.dy = 0; this.scroll = 0;
     return inp;
   }

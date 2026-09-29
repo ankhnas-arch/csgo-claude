@@ -1,0 +1,34 @@
+import { sleep } from '../harness.mjs';
+import { startMatchUI } from '../lib.mjs';
+export default async function (c) {
+  const page = await c.open('http://127.0.0.1:4173/?quality=low&scale=0.5');
+  await startMatchUI(page, { team: 'T', seed: 41 }); await c.ensureLocked();
+  await c.ev(() => window.__cs2.freezeBots(true)); await c.ev(() => window.__cs2.setPhaseTime(0.3)); await c.waitPhase('live'); await c.ev(() => window.__cs2.setPhaseTime(600));
+  await c.ev(() => window.__cs2.giveWeapon('ak47')); await sleep(1200);
+  await c.ev(() => window.__cs2.teleport(38, 20, 90)); await sleep(300); c.mx = 640; c.my = 360; await c.aimAt(90, 0); await sleep(200);
+  await c.events();
+  await c.click(1200); await sleep(300); const shots = await c.events('shot');
+  const pts = shots.filter(s => s.p.hit).map(s => s.p.hit);
+  const spread = pts.length > 3 ? Math.max(...pts.map(p => Math.hypot(p[1] - pts[0][1], p[2] - pts[0][2]))) : 0;
+  c.step('full-auto burst fires ~10+ rounds in 1.2 s', shots.length >= 9 && shots.length <= 14, `${shots.length} shots`);
+  c.step('spray group widens / climbs (max deviation > 0.15 m at 4.6 m)', spread > 0.15, `max dev ${spread.toFixed(2)} m`);
+  await c.shot('spray_impacts');
+  await c.ev(() => window.__cs2.teleport(38, 20, 90)); await sleep(200); c.mx = 640; c.my = 360; await c.aimAt(90, 0); await c.events();
+  await page.keyboard.down('KeyD'); await sleep(300); await c.click(700); await page.keyboard.up('KeyD'); await sleep(200);
+  const mv = (await c.events('shot')).filter(s => s.p.hit).map(s => s.p.hit); const mspread = mv.length > 2 ? Math.max(...mv.map(p => Math.hypot(p[1] - mv[0][1], p[2] - mv[0][2]))) : 0;
+  c.step('moving spread present', mspread > 0.1, `moving max dev ${mspread.toFixed(2)} m`);
+  const enemy = (await c.ev(() => window.__cs2.actors())).find(a => a.team === 'CT');
+  await c.ev(id => window.__cs2.teleport(38, 0, 0, id), enemy.id); await c.ev(() => window.__cs2.teleport(38, 10, 0)); await sleep(300); c.mx = 640; c.my = 360;
+  await c.press('KeyR'); await sleep(3000);
+  await c.aimAtPoint(38, 1.72, 0); await sleep(200); await c.events(); let hit = await c.ev(() => window.__cs2.aimHit()); c.note(`aim check head: ${JSON.stringify(hit)}`);
+  await c.click(60); await sleep(300); const h1 = (await c.events('hurt')).filter(e => e.p.actorId === enemy.id);
+  await c.aimAtPoint(38, 1.1, 0); await sleep(200); hit = await c.ev(() => window.__cs2.aimHit()); c.note(`aim check body: ${JSON.stringify(hit)}`);
+  await sleep(400); await c.click(60); await sleep(300); const h2 = (await c.events('hurt')).filter(e => e.p.actorId === enemy.id);
+  c.step('head hit registers with higher damage than body hit', h1.length > 0 && h2.length > 0 && h1[0].p.damage > h2[0].p.damage, `head ${h1[0]?.p.damage} (${h1[0]?.p.hitGroup}) body ${h2[0]?.p.damage} (${h2[0]?.p.hitGroup})`);
+  await c.shot('bot_hit');
+  await c.ev(id => window.__cs2.teleport(0, -1.2, 180, id), enemy.id); await c.ev(() => window.__cs2.teleport(0, 9, 0)); await sleep(300); c.mx = 640; c.my = 360;
+  await c.aimAtPoint(0, 1.0, -1.2); await sleep(200); hit = await c.ev(() => window.__cs2.aimHit()); c.note(`aim check cover: ${JSON.stringify(hit)}`); await c.events();
+  await c.click(60); await sleep(300); const h3 = (await c.events('hurt')).filter(e => e.p.actorId === enemy.id);
+  c.step('shot at body behind solid cover does not damage', h3.length === 0 && hit.actor === null, `hurt events ${h3.length}, trace hit ${hit.actor}`); await c.shot('cover');
+  c.step('no console errors', c.log.errors.length === 0, c.log.errors.slice(0, 3));
+}

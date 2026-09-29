@@ -1,0 +1,570 @@
+[
+  {
+    "name": "boot_menu",
+    "status": "PASS",
+    "steps": [
+      {
+        "name": "cold load reached menu",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "canvas has webgl2 context (not blank)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "settings panel opens",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "credits panel",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "equipment panel",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "setup panel with team/difficulty/economy",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Play activates match",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "controls explained on first entry",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "pointer lock acquired after intentional click",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "no console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "notes": [],
+    "shots": [
+      "evidence/run-batch1/boot_menu/menu.png",
+      "evidence/run-batch1/boot_menu/settings.png",
+      "evidence/run-batch1/boot_menu/equipment.png",
+      "evidence/run-batch1/boot_menu/setup.png",
+      "evidence/run-batch1/boot_menu/controls_card.png",
+      "evidence/run-batch1/boot_menu/freeze_hud.png"
+    ],
+    "errors": [],
+    "seconds": 55
+  },
+  {
+    "name": "mouse_lock",
+    "status": "PASS",
+    "steps": [
+      {
+        "name": "360° look returns to heading (delta wrapped)",
+        "ok": true,
+        "detail": "residual 5.2°"
+      },
+      {
+        "name": "pitch clamps and moves",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Escape pauses and releases lock",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "settings changed from pause menu",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Resume requires click and re-locks",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "closing menus did not fire a shot",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "blur clears held keys (no runaway movement)",
+        "ok": true,
+        "detail": "speed 0"
+      },
+      {
+        "name": "re-lock after blur via click",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "no console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "notes": [],
+    "shots": [
+      "evidence/run-batch1/mouse_lock/paused.png",
+      "evidence/run-batch1/mouse_lock/pause_settings.png",
+      "evidence/run-batch1/mouse_lock/relocked.png"
+    ],
+    "errors": [],
+    "seconds": 49
+  },
+  {
+    "name": "buy_economy",
+    "status": "FAIL",
+    "steps": [
+      {
+        "name": "buy menu opens with B in spawn during freeze",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "buy M4A4 ($2900)",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought m4a4\",\"cost\":2900}"
+      },
+      {
+        "name": "duplicate rifle refused",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Already own this weapon\",\"cost\":0}"
+      },
+      {
+        "name": "kevlar refused when money short",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Not enough money ($650)\",\"cost\":0}"
+      },
+      {
+        "name": "kevlar+helmet $1000",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought helmet\",\"cost\":1000}"
+      },
+      {
+        "name": "defuse kit $400 (CT)",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought defuser\",\"cost\":400}"
+      },
+      {
+        "name": "duplicate sidearm refused",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Already own this weapon\",\"cost\":0}"
+      },
+      {
+        "name": "grenade he",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought he\",\"cost\":300}"
+      },
+      {
+        "name": "grenade flash",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought flash\",\"cost\":200}"
+      },
+      {
+        "name": "grenade flash",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought flash\",\"cost\":200}"
+      },
+      {
+        "name": "grenade smoke",
+        "ok": true,
+        "detail": "{\"ok\":true,\"status\":\"Bought smoke\",\"cost\":300}"
+      },
+      {
+        "name": "5th grenade refused (limit 4)",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Grenade limit reached (4)\",\"cost\":0}"
+      },
+      {
+        "name": "3rd flash refused",
+        "ok": true,
+        "detail": "{\"ok\":false,\"status\":\"Grenade limit reached (4)\",\"cost\":0}"
+      },
+      {
+        "name": "AK-47 not listed for CT",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "inventory matches purchases",
+        "ok": true,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"CT\",\"alive\":true,\"health\":100,\"armor\":100,\"helmet\":true,\"money\":6600,\"x\":3,\"y\":0.05,\"z\":-48,\"yaw\":3.142,\"pitch\":0,\"active\":\"m4a4\",\"action\":\"idle\",\"mag\":30,\"reserve\":120,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":false,\"kit\":true,\"grenades\":[\"he\",\"flash\",\"flash\",\"smoke\"],\"primary\":\"m4a4\",\"secondary\":\"usp\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "money never negative",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "drop primary with G",
+        "ok": false,
+        "detail": ""
+      },
+      {
+        "name": "rebuy restores rifle",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "buy refused outside spawn zone",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "buy refused after buy time expiry",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "no console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "notes": [],
+    "shots": [
+      "evidence/run-batch1/buy_economy/buy_open.png",
+      "evidence/run-batch1/buy_economy/buy_insufficient.png",
+      "evidence/run-batch1/buy_economy/buy_after.png",
+      "evidence/run-batch1/buy_economy/buy_outside_zone.png",
+      "evidence/run-batch1/buy_economy/buy_expired.png"
+    ],
+    "errors": [],
+    "seconds": 54
+  },
+  {
+    "name": "firing",
+    "status": "FAIL",
+    "steps": [
+      {
+        "name": "full-auto burst fires ~10+ rounds in 1.2 s",
+        "ok": false,
+        "detail": "3 shots"
+      },
+      {
+        "name": "spray group widens / climbs (max deviation > 0.15 m at 4.6 m)",
+        "ok": false,
+        "detail": "max dev 0.00 m"
+      },
+      {
+        "name": "moving spread present",
+        "ok": false,
+        "detail": "moving max dev 0.00 m"
+      },
+      {
+        "name": "head hit registers with higher damage than body hit",
+        "ok": false,
+        "detail": "head undefined (undefined) body undefined (undefined)"
+      },
+      {
+        "name": "shot at body behind solid cover does not damage",
+        "ok": true,
+        "detail": "hurt events 0, trace hit null"
+      },
+      {
+        "name": "no console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "notes": [
+      "aim check head: {\"actor\":\"SEAL Team\",\"group\":\"chest\",\"distance\":9.85,\"point\":[38,1.72,0.15]}",
+      "aim check body: {\"actor\":\"SEAL Team\",\"group\":\"chest\",\"distance\":9.79,\"point\":[38,1.11,0.23]}",
+      "aim check cover: {\"actor\":null,\"group\":null,\"distance\":5.84,\"point\":[0,1.6,3.16]}"
+    ],
+    "shots": [
+      "evidence/run-batch1/firing/spray_impacts.png",
+      "evidence/run-batch1/firing/bot_hit.png",
+      "evidence/run-batch1/firing/cover.png"
+    ],
+    "errors": [],
+    "seconds": 35
+  },
+  {
+    "name": "reload_switch",
+    "status": "FAIL",
+    "steps": [
+      {
+        "name": "magazine empties to 0 by firing",
+        "ok": false,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"ak47\",\"action\":\"idle\",\"mag\":21,\"reserve\":90,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "dry fire does nothing / no negative ammo",
+        "ok": false,
+        "detail": ""
+      },
+      {
+        "name": "R starts reload",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "switch interrupts reload (knife active)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "interrupted reload granted no ammo",
+        "ok": false,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":20,\"yaw\":1.662,\"pitch\":0.143,\"active\":\"ak47\",\"action\":\"draw\",\"mag\":20,\"reserve\":90,\"zoom\":0,\"needsRechamber\":false,\"hasBomb\":true,\"kit\":false,\"grenades\":[],\"primary\":\"ak47\",\"secondary\":\"glock\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "case threw",
+        "ok": false,
+        "detail": "page.waitForFunction: Timeout 8000ms exceeded."
+      }
+    ],
+    "notes": [],
+    "shots": [
+      "evidence/run-batch1/reload_switch/reload_mid.png",
+      "evidence/run-batch1/reload_switch/error.png"
+    ],
+    "errors": [],
+    "seconds": 36
+  },
+  {
+    "name": "scope_melee",
+    "status": "FAIL",
+    "steps": [
+      {
+        "name": "first RMB: zoom level 1, FOV 40, overlay on, viewmodel hidden",
+        "ok": true,
+        "detail": "{\"current\":40,\"target\":40,\"cameraVFov\":30.5369432627651,\"viewmodelVisible\":false,\"scopeOverlay\":true}"
+      },
+      {
+        "name": "second RMB: zoom level 2, FOV 10",
+        "ok": true,
+        "detail": "{\"current\":10,\"target\":10,\"cameraVFov\":7.50833333548052,\"viewmodelVisible\":false,\"scopeOverlay\":true}"
+      },
+      {
+        "name": "third RMB: back to unscoped, FOV restored",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "scoped sensitivity scales down (zoom 1 ≈ 40/90)",
+        "ok": true,
+        "detail": "unscoped 0.230 scoped 0.102"
+      },
+      {
+        "name": "AWP shot hits scoped target and unscopes immediately",
+        "ok": false,
+        "detail": "damage undefined zoom after shot 1"
+      },
+      {
+        "name": "rechamber then automatic re-scope to previous level",
+        "ok": false,
+        "detail": "{\"id\":1,\"name\":\"You\",\"team\":\"CT\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":false,\"money\":3000,\"x\":38,\"y\":0.03,\"z\":30,\"yaw\":0,\"pitch\":-0.015,\"active\":\"awp\",\"action\":\"rechamber\",\"mag\":4,\"reserve\":10,\"zoom\":0,\"needsRechamber\":true,\"hasBomb\":false,\"kit\":false,\"grenades\":[],\"primary\":\"awp\",\"secondary\":\"usp\",\"kills\":0,\"deaths\":0,\"flash\":0,\"burn\":false,\"plant\":0,\"defuse\":0,\"grounded\":true,\"crouch\":false,\"speed\":0,\"isBot\":false}"
+      },
+      {
+        "name": "rapid switch/fire respects AWP cycle (≤1 extra shot)",
+        "ok": true,
+        "detail": "0 awp shots in 1 s"
+      },
+      {
+        "name": "switch while scoped restores FOV and clears overlay",
+        "ok": true,
+        "detail": "{\"current\":90,\"target\":90,\"cameraVFov\":73.73979529168803,\"viewmodelVisible\":true,\"scopeOverlay\":false}"
+      },
+      {
+        "name": "drop while scoped restores FOV",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "pause/resume while scoped keeps state coherent and fires nothing",
+        "ok": false,
+        "detail": "{\"zoom\":0,\"mag\":4}"
+      },
+      {
+        "name": "base FOV changed while scoped is restored correctly",
+        "ok": true,
+        "detail": "{\"current\":80,\"target\":80,\"cameraVFov\":64.3664437730972,\"viewmodelVisible\":true,\"scopeOverlay\":false}"
+      },
+      {
+        "name": "death while scoped clears overlay",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "knife swing at 6 m misses",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "knife slash at 1 m hits for ~40",
+        "ok": true,
+        "detail": "{\"actorId\":6,\"attackerId\":1,\"damage\":40,\"hitGroup\":\"chest\",\"weapon\":\"knife\"}"
+      },
+      {
+        "name": "knife stab (RMB) hits harder",
+        "ok": false,
+        "detail": ""
+      },
+      {
+        "name": "no console errors",
+        "ok": false,
+        "detail": "[\"requestfailed: http://127.0.0.1:5173/assets/weapons/ak47.glb\"]"
+      }
+    ],
+    "notes": [],
+    "shots": [
+      "evidence/run-batch1/scope_melee/awp_unscoped.png",
+      "evidence/run-batch1/scope_melee/awp_zoom1.png",
+      "evidence/run-batch1/scope_melee/awp_zoom2.png",
+      "evidence/run-batch1/scope_melee/awp_rescoped.png",
+      "evidence/run-batch1/scope_melee/awp_dead.png",
+      "evidence/run-batch1/scope_melee/knife.png"
+    ],
+    "errors": [
+      "requestfailed: http://127.0.0.1:5173/assets/weapons/ak47.glb"
+    ],
+    "seconds": 73
+  },
+  {
+    "name": "movement_routes",
+    "status": "FAIL",
+    "steps": [
+      {
+        "name": "T spawn -> outside long -> long doors",
+        "ok": true,
+        "detail": "38.5 s, stuck events 3"
+      },
+      {
+        "name": "Long doors -> long -> pit",
+        "ok": false,
+        "detail": "30.6 s, stuck events 12"
+      },
+      {
+        "name": "Pit -> long corner -> A ramp -> A site",
+        "ok": true,
+        "detail": "32.8 s, stuck events 5"
+      },
+      {
+        "name": "A site -> short -> catwalk -> mid",
+        "ok": true,
+        "detail": "65.0 s, stuck events 5"
+      },
+      {
+        "name": "Mid -> mid doors -> CT mid -> CT spawn",
+        "ok": false,
+        "detail": "31.2 s, stuck events 3"
+      },
+      {
+        "name": "CT spawn -> CT ramp -> A site",
+        "ok": true,
+        "detail": "46.7 s, stuck events 5"
+      },
+      {
+        "name": "CT spawn -> B doors -> B site -> B platform (jump ledge)",
+        "ok": false,
+        "detail": "84.5 s, stuck events 16"
+      },
+      {
+        "name": "B site -> arch -> upper tunnels -> lower tunnels -> mid",
+        "ok": true,
+        "detail": "102.2 s, stuck events 13"
+      },
+      {
+        "name": "T spawn -> outside tunnels -> upper tunnels -> B",
+        "ok": false,
+        "detail": "30.0 s, stuck events 6"
+      },
+      {
+        "name": "Reverse: B -> B doors -> CT spawn",
+        "ok": true,
+        "detail": "67.4 s, stuck events 5"
+      },
+      {
+        "name": "Reverse: A -> A ramp -> long -> long doors -> T spawn",
+        "ok": false,
+        "detail": "30.1 s, stuck events 7"
+      },
+      {
+        "name": "boundary press at (0,51.5)",
+        "ok": true,
+        "detail": "end 1.3,2.0,50.6"
+      },
+      {
+        "name": "boundary press at (42.5,20)",
+        "ok": true,
+        "detail": "end 41.0,0.0,20.0"
+      },
+      {
+        "name": "boundary press at (-45.5,-40)",
+        "ok": true,
+        "detail": "end -44.5,0.0,-40.0"
+      },
+      {
+        "name": "boundary press at (7.5,-50)",
+        "ok": true,
+        "detail": "end 5.6,0.0,-50.0"
+      },
+      {
+        "name": "crouch lowers eye and crouch-walk through mid doors",
+        "ok": false,
+        "detail": "moved 0.4 m"
+      },
+      {
+        "name": "catwalk stairs climb to short (y≈2)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "jump rises and lands",
+        "ok": false,
+        "detail": "peak sample +-0.02"
+      },
+      {
+        "name": "jump onto Xbox crate",
+        "ok": false,
+        "detail": "y=0.03"
+      },
+      {
+        "name": "no console errors",
+        "ok": true,
+        "detail": "[]"
+      }
+    ],
+    "notes": [
+      "Long doors -> long -> pit: failed to reach (38,10) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+      "Mid -> mid doors -> CT mid -> CT spawn: failed to reach (0,-27) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+      "CT spawn -> B doors -> B site -> B platform (jump ledge): failed to reach (-36.5,-44) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+      "T spawn -> outside tunnels -> upper tunnels -> B: failed to reach (-14,44) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+      "Reverse: A -> A ramp -> long -> long doors -> T spawn: failed to reach (38,-26) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+      "routes: [{\"route\":\"T spawn -> outside long -> long doors\",\"ok\":true,\"seconds\":38.5,\"stuckEvents\":3,\"end\":[37.35,0.03,42.03]},{\"route\":\"Long doors -> long -> pit\",\"ok\":false,\"seconds\":30.6,\"stuckEvents\":12,\"end\":[33.75,0.03,32.47]},{\"route\":\"Pit -> long corner -> A ramp -> A site\",\"ok\":true,\"seconds\":32.8,\"stuckEvents\":5,\"end\":[32.03,2.03,-37.58]},{\"route\":\"A site -> short -> catwalk -> mid\",\"ok\":true,\"seconds\":65,\"stuckEvents\":5,\"end\":[0.12,0.02,-0.92]},{\"route\":\"Mid -> mid doors -> CT mid -> CT spawn\",\"ok\":false,\"seconds\":31.2,\"stuckEvents\":3,\"end\":[-1.17,0.03,-21.51]},{\"route\":\"CT spawn -> CT ramp -> A site\",\"ok\":true,\"seconds\":46.7,\"stuckEvents\":5,\"end\":[29.11,2.03,-40.21]},{\"route\":\"CT spawn -> B doors -> B site -> B platform (jump ledge)\",\"ok\":false,\"seconds\":84.5,\"stuckEvents\":16,\"end\":[-36.55,0.03,-40.21]},{\"route\":\"B site -> arch -> upper tunnels -> lower tunnels -> mid\",\"ok\":true,\"seconds\":102.2,\"stuckEvents\":13,\"end\":[-4.72,0.03,0.01]},{\"route\":\"T spawn -> outside tunnels -> upper tunnels -> B\",\"ok\":false,\"seconds\":30,\"stuckEvents\":6,\"end\":[-12.7,1.89,42.4]},{\"route\":\"Reverse: B -> B doors -> CT spawn\",\"ok\":true,\"seconds\":67.4,\"stuckEvents\":5,\"end\":[0.12,0.03,-46.01]},{\"route\":\"Reverse: A -> A ramp -> long -> long doors -> T spawn\",\"ok\":false,\"seconds\":30.1,\"stuckEvents\":7,\"end\":[35.59,2.03,-38.94]}]"
+    ],
+    "shots": [
+      "evidence/run-batch1/movement_routes/route_1.png",
+      "evidence/run-batch1/movement_routes/route_2.png",
+      "evidence/run-batch1/movement_routes/route_3.png",
+      "evidence/run-batch1/movement_routes/route_4.png",
+      "evidence/run-batch1/movement_routes/route_5.png",
+      "evidence/run-batch1/movement_routes/route_6.png",
+      "evidence/run-batch1/movement_routes/route_7.png",
+      "evidence/run-batch1/movement_routes/route_8.png",
+      "evidence/run-batch1/movement_routes/route_9.png",
+      "evidence/run-batch1/movement_routes/route_10.png",
+      "evidence/run-batch1/movement_routes/route_11.png",
+      "evidence/run-batch1/movement_routes/doors_crouch.png",
+      "evidence/run-batch1/movement_routes/xbox_top.png"
+    ],
+    "errors": [],
+    "seconds": 675
+  }
+]

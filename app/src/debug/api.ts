@@ -3,13 +3,26 @@ import { WEAPONS } from '../data/weapons';
 import { WeaponInstance } from '../sim/weapon';
 import { floorYAt } from '../data/map/layout';
 import { WEAPON_STATS } from '../render/viewmodel';
+import * as combat from '../sim/combat';
 
 /**
  * Developer/evidence API on window.__cs2. Fixtures PREPARE scenarios (positions, money, inventories, seeds); they never
  * substitute for input-driven proof. Read-only stats are used by the Playwright evidence harness.
  */
+const EVENT_KEYS = ['shot', 'hurt', 'kill', 'reload', 'weaponSwitch', 'grenadeThrow', 'grenadeDetonate', 'grenadeBounce', 'flashed', 'bombPlanted', 'bombDefused', 'bombExploded', 'bombDropped', 'bombPickup', 'plantProgress', 'defuseProgress', 'phase', 'roundEnd', 'matchEnd', 'purchase', 'purchaseDenied', 'itemDrop', 'itemPickup', 'scope', 'sideSwitch', 'knifeSwing'] as const;
+let ring: { t: number; k: string; p: unknown }[] = []; let hooked: unknown = null;
+function hook(app: App) { const g = app.game; if (!g || hooked === g) return; hooked = g; ring = []; for (const k of EVENT_KEYS) g.events.on(k as any, (p: unknown) => { ring.push({ t: g.time, k, p: JSON.parse(JSON.stringify(p)) }); if (ring.length > 4000) ring.splice(0, 1000); }); }
 export function installDebugApi(app: App) {
+  setInterval(() => hook(app), 250);
   const api = {
+    drainEvents: (filter?: string) => { hook(app); const out = filter ? ring.filter(e => e.k === filter) : ring.slice(); ring = filter ? ring.filter(e => e.k !== filter) : []; return out; },
+    peekEvents: (filter?: string) => filter ? ring.filter(e => e.k === filter) : ring.slice(),
+    bots: () => app.game ? Array.from(app.game.brains.values()).map(b => ({ id: b.a.id, name: b.a.name, team: b.a.team, alive: b.a.alive, role: b.role, goal: b.goal, goalReason: b.goalReason, target: b.target?.name ?? null, memory: b.memory ? { x: +b.memory.x.toFixed(1), z: +b.memory.z.toFixed(1), age: +(app.game!.time - b.memory.time).toFixed(1) } : null, stuckT: b.stuckT, stuckCount: b.stuckCount, pathLen: b.path?.length ?? 0, x: +b.a.x.toFixed(1), z: +b.a.z.toFixed(1) })) : [],
+    canSee: (fromId: number, toId: number) => { const g = app.game; if (!g) return null; const a = g.actorById(fromId), b = g.actorById(toId); return a && b ? g.canSee(a, b) : null; },
+    fov: () => ({ current: app.scene.currentFov, target: app.scene.zoomTargetFov, cameraVFov: app.scene.camera.fov, viewmodelVisible: app.scene.viewModel.pivot.visible, scopeOverlay: !!document.querySelector('#hud .scope.on') }),
+    aimHit: () => { const g = app.game; if (!g) return null; const a = g.player; const d = a.aimDir(); const hit = (window as any).__cs2._trace(a, d); return hit; },
+    _trace: (a: any, d: number[]) => { const g = app.game!; const { traceShot } = (window as any).__cs2._combat; const h = traceShot(g.pw, a, g.actors, a.x, a.eyeY, a.z, d[0], d[1], d[2], 200); return { actor: h.actor ? h.actor.name : null, group: h.group, distance: +h.distance.toFixed(2), point: h.point.map((v: number) => +v.toFixed(2)) }; },
+    _combat: null as unknown,
     app,
     get game() { return app.game; },
     state: () => ({ app: app.state, phase: app.game?.match.phase, round: app.game?.match.round, score: app.game?.match.teams, locked: app.input.locked, paused: app.paused, buyOpen: app.buyOpen, time: app.game?.time, player: app.game ? summarize(app.game.player) : null, bomb: app.game?.match.bomb, phaseTime: app.game?.match.phaseTime }),
@@ -38,6 +51,7 @@ export function installDebugApi(app: App) {
     navCheck: () => { const g = app.game; if (!g) return null; const nav = g.nav; const routes: Record<string, [number, number, number, number]> = { 'T->A via long': [0, 46, 34, -38], 'T->B via tunnels': [0, 46, -36, -38], 'T->mid->CT': [0, 46, 3, -46], 'CT->A ramp': [3, -48, 34, -38], 'CT->B doors': [3, -48, -36, -38], 'mid->lower->upper': [0, 0, -36, 10], 'long->pit': [40, -4, 49, -4], 'mid->catwalk->short->A': [0, -10, 28, -40] }; const out: Record<string, number | null> = {}; for (const [k, [x0, z0, x1, z1]] of Object.entries(routes)) { const p = nav.findPath(x0, z0, x1, z1); out[k] = p ? p.length : null; } return out; },
     version: '0.1.0',
   };
+  api._combat = combat;
   (window as any).__cs2 = api;
 }
 function summarize(a: import('../sim/actor').Actor) {

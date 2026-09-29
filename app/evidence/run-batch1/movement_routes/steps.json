@@ -1,0 +1,130 @@
+{
+  "name": "movement_routes",
+  "status": "FAIL",
+  "steps": [
+    {
+      "name": "T spawn -> outside long -> long doors",
+      "ok": true,
+      "detail": "38.5 s, stuck events 3"
+    },
+    {
+      "name": "Long doors -> long -> pit",
+      "ok": false,
+      "detail": "30.6 s, stuck events 12"
+    },
+    {
+      "name": "Pit -> long corner -> A ramp -> A site",
+      "ok": true,
+      "detail": "32.8 s, stuck events 5"
+    },
+    {
+      "name": "A site -> short -> catwalk -> mid",
+      "ok": true,
+      "detail": "65.0 s, stuck events 5"
+    },
+    {
+      "name": "Mid -> mid doors -> CT mid -> CT spawn",
+      "ok": false,
+      "detail": "31.2 s, stuck events 3"
+    },
+    {
+      "name": "CT spawn -> CT ramp -> A site",
+      "ok": true,
+      "detail": "46.7 s, stuck events 5"
+    },
+    {
+      "name": "CT spawn -> B doors -> B site -> B platform (jump ledge)",
+      "ok": false,
+      "detail": "84.5 s, stuck events 16"
+    },
+    {
+      "name": "B site -> arch -> upper tunnels -> lower tunnels -> mid",
+      "ok": true,
+      "detail": "102.2 s, stuck events 13"
+    },
+    {
+      "name": "T spawn -> outside tunnels -> upper tunnels -> B",
+      "ok": false,
+      "detail": "30.0 s, stuck events 6"
+    },
+    {
+      "name": "Reverse: B -> B doors -> CT spawn",
+      "ok": true,
+      "detail": "67.4 s, stuck events 5"
+    },
+    {
+      "name": "Reverse: A -> A ramp -> long -> long doors -> T spawn",
+      "ok": false,
+      "detail": "30.1 s, stuck events 7"
+    },
+    {
+      "name": "boundary press at (0,51.5)",
+      "ok": true,
+      "detail": "end 1.3,2.0,50.6"
+    },
+    {
+      "name": "boundary press at (42.5,20)",
+      "ok": true,
+      "detail": "end 41.0,0.0,20.0"
+    },
+    {
+      "name": "boundary press at (-45.5,-40)",
+      "ok": true,
+      "detail": "end -44.5,0.0,-40.0"
+    },
+    {
+      "name": "boundary press at (7.5,-50)",
+      "ok": true,
+      "detail": "end 5.6,0.0,-50.0"
+    },
+    {
+      "name": "crouch lowers eye and crouch-walk through mid doors",
+      "ok": false,
+      "detail": "moved 0.4 m"
+    },
+    {
+      "name": "catwalk stairs climb to short (y≈2)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "jump rises and lands",
+      "ok": false,
+      "detail": "peak sample +-0.02"
+    },
+    {
+      "name": "jump onto Xbox crate",
+      "ok": false,
+      "detail": "y=0.03"
+    },
+    {
+      "name": "no console errors",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "notes": [
+    "Long doors -> long -> pit: failed to reach (38,10) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+    "Mid -> mid doors -> CT mid -> CT spawn: failed to reach (0,-27) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+    "CT spawn -> B doors -> B site -> B platform (jump ledge): failed to reach (-36.5,-44) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+    "T spawn -> outside tunnels -> upper tunnels -> B: failed to reach (-14,44) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+    "Reverse: A -> A ramp -> long -> long doors -> T spawn: failed to reach (38,-26) — at {\"id\":1,\"name\":\"You\",\"team\":\"T\",\"alive\":true,\"health\":100,\"armor\":0,\"helmet\":fal",
+    "routes: [{\"route\":\"T spawn -> outside long -> long doors\",\"ok\":true,\"seconds\":38.5,\"stuckEvents\":3,\"end\":[37.35,0.03,42.03]},{\"route\":\"Long doors -> long -> pit\",\"ok\":false,\"seconds\":30.6,\"stuckEvents\":12,\"end\":[33.75,0.03,32.47]},{\"route\":\"Pit -> long corner -> A ramp -> A site\",\"ok\":true,\"seconds\":32.8,\"stuckEvents\":5,\"end\":[32.03,2.03,-37.58]},{\"route\":\"A site -> short -> catwalk -> mid\",\"ok\":true,\"seconds\":65,\"stuckEvents\":5,\"end\":[0.12,0.02,-0.92]},{\"route\":\"Mid -> mid doors -> CT mid -> CT spawn\",\"ok\":false,\"seconds\":31.2,\"stuckEvents\":3,\"end\":[-1.17,0.03,-21.51]},{\"route\":\"CT spawn -> CT ramp -> A site\",\"ok\":true,\"seconds\":46.7,\"stuckEvents\":5,\"end\":[29.11,2.03,-40.21]},{\"route\":\"CT spawn -> B doors -> B site -> B platform (jump ledge)\",\"ok\":false,\"seconds\":84.5,\"stuckEvents\":16,\"end\":[-36.55,0.03,-40.21]},{\"route\":\"B site -> arch -> upper tunnels -> lower tunnels -> mid\",\"ok\":true,\"seconds\":102.2,\"stuckEvents\":13,\"end\":[-4.72,0.03,0.01]},{\"route\":\"T spawn -> outside tunnels -> upper tunnels -> B\",\"ok\":false,\"seconds\":30,\"stuckEvents\":6,\"end\":[-12.7,1.89,42.4]},{\"route\":\"Reverse: B -> B doors -> CT spawn\",\"ok\":true,\"seconds\":67.4,\"stuckEvents\":5,\"end\":[0.12,0.03,-46.01]},{\"route\":\"Reverse: A -> A ramp -> long -> long doors -> T spawn\",\"ok\":false,\"seconds\":30.1,\"stuckEvents\":7,\"end\":[35.59,2.03,-38.94]}]"
+  ],
+  "shots": [
+    "evidence/run-batch1/movement_routes/route_1.png",
+    "evidence/run-batch1/movement_routes/route_2.png",
+    "evidence/run-batch1/movement_routes/route_3.png",
+    "evidence/run-batch1/movement_routes/route_4.png",
+    "evidence/run-batch1/movement_routes/route_5.png",
+    "evidence/run-batch1/movement_routes/route_6.png",
+    "evidence/run-batch1/movement_routes/route_7.png",
+    "evidence/run-batch1/movement_routes/route_8.png",
+    "evidence/run-batch1/movement_routes/route_9.png",
+    "evidence/run-batch1/movement_routes/route_10.png",
+    "evidence/run-batch1/movement_routes/route_11.png",
+    "evidence/run-batch1/movement_routes/doors_crouch.png",
+    "evidence/run-batch1/movement_routes/xbox_top.png"
+  ],
+  "errors": []
+}
